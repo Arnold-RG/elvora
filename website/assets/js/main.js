@@ -5,15 +5,15 @@
   const menu = document.querySelector(".menu");
   const greet = document.getElementById("greet");
 
-  if (window.ArnovaSecure) {
-    window.ArnovaSecure.hardenExternalLinks(document);
-    window.ArnovaSecure.initReveals(document);
+  if (window.ViraSecure) {
+    window.ViraSecure.hardenExternalLinks(document);
+    window.ViraSecure.initReveals(document);
   }
 
   if (greet) {
     const hour = new Date().getHours();
-    window.ArnovaSecure
-      ? window.ArnovaSecure.text(
+    window.ViraSecure
+      ? window.ViraSecure.text(
           greet,
           hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening",
         )
