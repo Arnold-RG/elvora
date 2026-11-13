@@ -86,3 +86,7 @@ Full visual index → **[docs/SHOWCASE.md](docs/SHOWCASE.md)**
 ## Disclaimer
 
 Elvora is a wellness / fitness product. It is not intended for medical diagnosis or treatment.
+
+## Author
+
+Arnold Rurangwa
