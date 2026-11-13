@@ -95,4 +95,4 @@ Public page for the product: the day’s structure, the coach, and a link into t
 - [Product blueprint](PRODUCT_BLUEPRINT.md)
 - [Architecture](ARCHITECTURE.md)
 - [Nutrition fitness loop](NUTRITION_FITNESS_LOOP.md)
-- [Docs hub](README.md)
+- [Docs hub](OVERVIEW.md)
