@@ -1,6 +1,6 @@
 from pathlib import Path
 
-p = Path(r"c:\flutter_windows_3.29.3-stable\flutter\nfbot_app\tool\gen_world_data.py")
+p = Path(r"c:\flutter_windows_3.29.3-stable\flutter\elvora_app\tool\gen_world_data.py")
 lines = p.read_text(encoding="utf-8").splitlines()
 out = []
 for line in lines:

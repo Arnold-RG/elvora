@@ -6,7 +6,7 @@ import re
 from typing import Iterable
 
 MEDICAL_DISCLAIMER = (
-    "NFL BOT provides wellness and fitness guidance and is not a substitute for "
+    "Elvora provides wellness and fitness guidance and is not a substitute for "
     "professional medical advice, diagnosis, or treatment."
 )
 
@@ -35,7 +35,7 @@ def medical_redirect_message() -> str:
     return (
         f"{MEDICAL_DISCLAIMER} If you may be experiencing a medical emergency or "
         "serious symptoms, seek emergency services or contact a qualified clinician. "
-        "NFL BOT cannot diagnose or treat medical conditions."
+        "Elvora cannot diagnose or treat medical conditions."
     )
 
 

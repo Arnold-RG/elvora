@@ -56,7 +56,7 @@ Without this, App Store / TestFlight is impossible.
 ## Step 4 — Codemagic (builds on a Mac for you)
 
 1. Sign up: [https://codemagic.io](https://codemagic.io)  
-2. Push `nfbot_app` to **GitHub** (or GitLab) if it isn’t already  
+2. Push `elvora_app` to **GitHub** (or GitLab) if it isn’t already  
 3. Codemagic → Add application → select the repo  
 4. Team settings → **Integrations** → **Developer Portal** → add API key  
    - Name it exactly: `NFLBOT_ASC` (matches `codemagic.yaml`)  

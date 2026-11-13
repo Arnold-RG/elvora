@@ -37,7 +37,7 @@ If you lose the keystore, you **cannot update** the same Play listing.
 
 ## Step 3 — Build the Play upload file (App Bundle)
 
-On this PC, in `nfbot_app`:
+On this PC, in `elvora_app`:
 
 ```powershell
 flutter pub get
@@ -110,7 +110,7 @@ Then: **Closed / Open testing** → **Production**.
 ## Commands cheat sheet
 
 ```powershell
-cd c:\flutter_windows_3.29.3-stable\flutter\nfbot_app
+cd c:\flutter_windows_3.29.3-stable\flutter\elvora_app
 flutter build appbundle --release
 flutter build apk --release
 ```

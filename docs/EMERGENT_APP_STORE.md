@@ -6,7 +6,7 @@
 
 | Fact | Detail |
 |------|--------|
-| Your app | **Flutter** (`nfbot_app`) |
+| Your app | **Flutter** (`elvora_app`) |
 | Emergent mobile | **Expo / React Native only** ([docs](https://help.emergent.sh/mobile-app-development)) |
 | Not supported in Emergent | Flutter, native Swift, native Kotlin |
 | Apple still requires | Your **Apple Developer** account ($99/yr) |

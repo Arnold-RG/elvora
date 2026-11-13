@@ -20,7 +20,7 @@ class PairingLink {
 
   /// Directory of a web app URL, including a trailing slash.
   ///
-  /// Pages serves the app under `/nfl-bot/app/`. Using only the origin
+  /// Pages serves the app under `/elvora/app/`. Using only the origin
   /// would send a scanned watch to the host root, where `pair.html` is not.
   static String directoryOf(Uri uri) {
     var path = uri.path;
@@ -32,7 +32,7 @@ class PairingLink {
       final slash = path.lastIndexOf('/');
       final last = slash >= 0 ? path.substring(slash + 1) : path;
       // A dotted segment is a file (index.html, pair.html). A bare
-      // directory such as `/nfl-bot/app` should keep its name.
+      // directory such as `/elvora/app` should keep its name.
       if (last.contains('.')) {
         path = slash <= 0 ? '/' : path.substring(0, slash + 1);
       } else {

@@ -1,1 +1,1 @@
-"""NFL BOT backend application package."""
+"""Elvora backend application package."""

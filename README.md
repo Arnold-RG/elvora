@@ -10,13 +10,13 @@
 </p>
 
 <p align="center">
-  <a href="https://arnold-rg.github.io/nfl-bot/"><img src="https://img.shields.io/badge/Live_site-GitHub_Pages-C9A27A?style=for-the-badge&logo=github" alt="Live site"/></a>
-  <a href="https://arnold-rg.github.io/nfl-bot/app/"><img src="https://img.shields.io/badge/Try_web_app-Open-E08A45?style=for-the-badge&logo=flutter" alt="Web app"/></a>
-  <a href="https://github.com/Arnold-RG/nfl-bot"><img src="https://img.shields.io/badge/Repo-Public-0A0908?style=for-the-badge&logo=github" alt="Public repo"/></a>
+  <a href="https://arnold-rg.github.io/elvora/"><img src="https://img.shields.io/badge/Live_site-GitHub_Pages-C9A27A?style=for-the-badge&logo=github" alt="Live site"/></a>
+  <a href="https://arnold-rg.github.io/elvora/app/"><img src="https://img.shields.io/badge/Try_web_app-Open-E08A45?style=for-the-badge&logo=flutter" alt="Web app"/></a>
+  <a href="https://github.com/Arnold-RG/elvora"><img src="https://img.shields.io/badge/Repo-Public-0A0908?style=for-the-badge&logo=github" alt="Public repo"/></a>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/github/actions/workflow/status/Arnold-RG/nfl-bot/deploy-pages.yml?label=Pages%20deploy&style=flat-square" alt="CI"/>
+  <img src="https://img.shields.io/github/actions/workflow/status/Arnold-RG/elvora/deploy-pages.yml?label=Pages%20deploy&style=flat-square" alt="CI"/>
   <img src="https://img.shields.io/badge/Flutter-iOS%20%7C%20Android%20%7C%20Web-02569B?style=flat-square&logo=flutter" alt="Flutter"/>
   <img src="https://img.shields.io/badge/Wake%20phrase-hey%20elvora-E08A45?style=flat-square" alt="Wake"/>
 </p>
@@ -44,10 +44,10 @@ Elvora is not a calorie counter with extra screens. It is a connected health and
 
 | | Link |
 |---|---|
-| **Marketing site** | https://arnold-rg.github.io/nfl-bot/ |
-| **Web app** | https://arnold-rg.github.io/nfl-bot/app/ |
-| **Privacy** | https://arnold-rg.github.io/nfl-bot/privacy.html |
-| **Source** | https://github.com/Arnold-RG/nfl-bot |
+| **Marketing site** | https://arnold-rg.github.io/elvora/ |
+| **Web app** | https://arnold-rg.github.io/elvora/app/ |
+| **Privacy** | https://arnold-rg.github.io/elvora/privacy.html |
+| **Source** | https://github.com/Arnold-RG/elvora |
 
 ---
 

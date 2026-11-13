@@ -1,12 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nfbot_app/core/models/coach_persona.dart';
-import 'package:nfbot_app/core/models/user_profile.dart';
-import 'package:nfbot_app/core/providers/app_state.dart';
-import 'package:nfbot_app/core/data/world_countries.dart';
-import 'package:nfbot_app/core/data/world_currencies.dart';
-import 'package:nfbot_app/core/data/world_languages.dart';
-import 'package:nfbot_app/core/utils/fitness_calculator.dart';
-import 'package:nfbot_app/core/utils/pairing_link.dart';
+import 'package:elvora_app/core/models/coach_persona.dart';
+import 'package:elvora_app/core/models/user_profile.dart';
+import 'package:elvora_app/core/providers/app_state.dart';
+import 'package:elvora_app/core/data/world_countries.dart';
+import 'package:elvora_app/core/data/world_currencies.dart';
+import 'package:elvora_app/core/data/world_languages.dart';
+import 'package:elvora_app/core/utils/fitness_calculator.dart';
+import 'package:elvora_app/core/utils/pairing_link.dart';
 
 void main() {
   test('AppState boots from prefs without a cartoon trainer', () {
@@ -58,21 +58,21 @@ void main() {
   test('pairing links keep the app directory, not just the host', () {
     expect(
       PairingLink.directoryOf(
-        Uri.parse('https://arnold-rg.github.io/nfl-bot/app/'),
+        Uri.parse('https://arnold-rg.github.io/elvora/app/'),
       ),
-      'https://arnold-rg.github.io/nfl-bot/app/',
+      'https://arnold-rg.github.io/elvora/app/',
     );
     expect(
       PairingLink.directoryOf(
-        Uri.parse('https://arnold-rg.github.io/nfl-bot/app/index.html'),
+        Uri.parse('https://arnold-rg.github.io/elvora/app/index.html'),
       ),
-      'https://arnold-rg.github.io/nfl-bot/app/',
+      'https://arnold-rg.github.io/elvora/app/',
     );
     expect(
       PairingLink.directoryOf(
-        Uri.parse('https://arnold-rg.github.io/nfl-bot/app'),
+        Uri.parse('https://arnold-rg.github.io/elvora/app'),
       ),
-      'https://arnold-rg.github.io/nfl-bot/app/',
+      'https://arnold-rg.github.io/elvora/app/',
     );
     expect(
       PairingLink.directoryOf(
