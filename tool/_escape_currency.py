@@ -1,7 +1,7 @@
 from pathlib import Path
 import re
 
-p = Path(r"c:\flutter_windows_3.29.3-stable\flutter\nfbot_app\lib\core\data\world_currencies.dart")
+p = Path(r"c:\flutter_windows_3.29.3-stable\flutter\elvora_app\lib\core\data\world_currencies.dart")
 text = p.read_text(encoding="utf-8")
 
 def fix(match: re.Match[str]) -> str:

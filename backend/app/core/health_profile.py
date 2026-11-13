@@ -1,4 +1,4 @@
-"""Central user health profile — the NFL BOT Health Data Platform brain schema."""
+"""Central user health profile — the Elvora Health Data Platform brain schema."""
 
 from __future__ import annotations
 

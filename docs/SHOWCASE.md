@@ -1,7 +1,7 @@
 # Visual showcase — Elvora
 
 Every major surface explained with images.  
-Live site: [arnold-rg.github.io/nfl-bot](https://arnold-rg.github.io/nfl-bot/) · Web app: [/app](https://arnold-rg.github.io/nfl-bot/app/)
+Live site: [arnold-rg.github.io/elvora](https://arnold-rg.github.io/elvora/) · Web app: [/app](https://arnold-rg.github.io/elvora/app/)
 
 ---
 

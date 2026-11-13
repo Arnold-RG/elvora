@@ -1,4 +1,4 @@
-# Codemagic — build NFL BOT for iPhone and upload to TestFlight / App Store.
+# Codemagic — build Elvora for iPhone and upload to TestFlight / App Store.
 # Docs: https://docs.codemagic.io/yaml-quick-start/building-a-flutter-app/
 #
 # Before first build:
@@ -10,7 +10,7 @@
 
 workflows:
   ios-testflight:
-    name: NFL BOT — iOS TestFlight
+    name: Elvora — iOS TestFlight
     instance_type: mac_mini_m2
     max_build_duration: 120
     integrations:

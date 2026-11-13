@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://arnold-rg.github.io/nfl-bot/sitemap.xml
+Sitemap: https://arnold-rg.github.io/elvora/sitemap.xml

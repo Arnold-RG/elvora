@@ -1,4 +1,4 @@
-"""Application settings for the NFL BOT modular monolith."""
+"""Application settings for the Elvora modular monolith."""
 
 from functools import lru_cache
 
@@ -8,7 +8,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
-    app_name: str = "NFL BOT API"
+    app_name: str = "Elvora API"
     app_version: str = "0.1.0"
     environment: str = "development"
     api_prefix: str = ""

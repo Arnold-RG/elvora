@@ -1,4 +1,4 @@
-"""NFL BOT FastAPI application — modular monolith entrypoint."""
+"""Elvora FastAPI application — modular monolith entrypoint."""
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -12,7 +12,7 @@ app = FastAPI(
     title=settings.app_name,
     version=settings.app_version,
     description=(
-        "NFL BOT Health Data Platform API (modular monolith). "
+        "Elvora Health Data Platform API (modular monolith). "
         "Member app ~:8080 · Creator SOC ~:9090 (URL/API only) · this API :8000."
     ),
 )

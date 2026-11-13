@@ -18,7 +18,7 @@ Browser should be open at Play Console signup. Follow in order.
 2. **Create new release**  
 3. Upload this file:
 
-`c:\flutter_windows_3.29.3-stable\flutter\nfbot_app\build\app\outputs\bundle\release\app-release.aab`
+`c:\flutter_windows_3.29.3-stable\flutter\elvora_app\build\app\outputs\bundle\release\app-release.aab`
 
 4. Release name: `1.0.0 (1)`  
 5. Save → Review → Start rollout to Internal testing  

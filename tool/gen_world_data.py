@@ -345,7 +345,7 @@ COUNTRIES = [
     ("ZM", "Zambia", "Africa", "en", "ZMW"), ("ZW", "Zimbabwe", "Africa", "en", "ZWL"),
 ]
 
-ROOT = Path(r"c:\flutter_windows_3.29.3-stable\flutter\nfbot_app\lib\core\data")
+ROOT = Path(r"c:\flutter_windows_3.29.3-stable\flutter\elvora_app\lib\core\data")
 ROOT.mkdir(parents=True, exist_ok=True)
 
 

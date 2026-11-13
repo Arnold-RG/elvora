@@ -1,8 +1,8 @@
 # Documentation hub — Elvora
 
-Technical and product docs for **Elvora** ([nfl-bot](https://github.com/Arnold-RG/nfl-bot) repository).
+Technical and product docs for **Elvora** ([elvora](https://github.com/Arnold-RG/elvora) repository).
 
-**Live:** [Website](https://arnold-rg.github.io/nfl-bot/) · [Web app](https://arnold-rg.github.io/nfl-bot/app/)  
+**Live:** [Website](https://arnold-rg.github.io/elvora/) · [Web app](https://arnold-rg.github.io/elvora/app/)  
 **Visuals:** **[SHOWCASE.md](SHOWCASE.md)**
 
 ## Start here

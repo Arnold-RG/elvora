@@ -47,7 +47,7 @@ def join_challenge(challenge_id: str) -> dict:
 @router.post("/share-cards")
 def share_cards(body: ShareCardRequest) -> dict:
     lines = [
-        "NFL BOT",
+        "Elvora",
         body.title,
         body.subtitle,
         body.value,

@@ -141,7 +141,7 @@ def route(request: OrchestrateRequest) -> dict[str, Any]:
         "handler": "llm_chat",
         "deterministic": False,
         "result": wrap_coach_reply(
-            "I'm your NFL BOT coach. Ask what to do now, what to eat, or how to train today."
+            "I'm your Elvora coach. Ask what to do now, what to eat, or how to train today."
         ),
         "meta": {"stub": True},
     }
@@ -185,7 +185,7 @@ def morning_brief(profile: HealthProfile | None = None) -> dict[str, Any]:
                 "Train upper body ~50 minutes. Calorie target is moderate for expected activity."
             ),
             "disclaimer": (
-                "NFL BOT provides wellness and fitness guidance and is not a substitute for "
+                "Elvora provides wellness and fitness guidance and is not a substitute for "
                 "professional medical advice, diagnosis, or treatment."
             ),
         },

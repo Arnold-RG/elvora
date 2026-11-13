@@ -25,7 +25,7 @@ Open: [http://localhost:9090](http://localhost:9090)
 Keep the Flutter web member app on its own port, typically:
 
 ```bash
-# from nfbot_app
+# from elvora_app
 flutter run -d chrome --web-port=8080
 # or serve an existing build
 # python -m http.server 8080   # from build/web
