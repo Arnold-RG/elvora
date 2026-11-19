@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#090908">
+  <meta name="description" content="Download Elvora for Android and iOS. Store pages appear after publishing.">
+  <title>Download Elvora</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", "Avenir Next", sans-serif;
+      background:
+        radial-gradient(ellipse 70% 40% at 0% 0%, rgba(198,163,106,0.1), transparent 55%),
+        #090908;
+      color: #f6f1e8;
+      padding: 32px 20px 48px;
+    }
+    .wrap { width: min(880px, 100%); margin: 0 auto; }
+    .kicker {
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #c6a36a;
+      font-size: 0.72rem;
+      margin: 0 0 0.8rem;
+    }
+    h1 {
+      margin: 0;
+      font-family: Palatino, "Palatino Linotype", Georgia, serif;
+      font-weight: 500;
+      font-size: clamp(2.2rem, 5vw, 3.4rem);
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+    .lede { color: #c9c0b3; font-weight: 300; max-width: 42rem; line-height: 1.6; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 28px;
+    }
+    .card {
+      border: 1px solid rgba(198,163,106,0.22);
+      border-radius: 22px;
+      padding: 22px 18px 20px;
+      text-align: center;
+      background: #141311;
+    }
+    .card h2 {
+      margin: 0.4rem 0 0.8rem;
+      font-family: Palatino, Georgia, serif;
+      font-weight: 500;
+      font-size: 1.6rem;
+    }
+    .card img {
+      width: min(220px, 100%);
+      height: auto;
+      margin: 0 auto;
+      background: #f6f1e8;
+      border-radius: 12px;
+    }
+    .badge {
+      display: inline-block;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-size: 0.68rem;
+      color: #e7d3ae;
+    }
+    a.btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      margin-top: 14px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #f6ead4, #c6a36a);
+      color: #1a140e;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+    .note {
+      margin-top: 22px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(198,163,106,0.22);
+      color: #c9c0b3;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    .back { color: #e7d3ae; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <p class="kicker">Elvora</p>
+    <h1>Download</h1>
+    <p class="lede">Scan a code with your phone to open the store page. Those listings appear after the apps are published.</p>
+    <div class="grid">
+      <section class="card">
+        <div class="badge">Android</div>
+        <h2>Play Store</h2>
+        <img
+          alt="QR code for the Elvora Play Store listing"
+          width="220"
+          height="220"
+          src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.nfbot.nfbot_app"
+        >
+        <div>
+          <a class="btn" href="https://play.google.com/store/apps/details?id=com.nfbot.nfbot_app">Open Play Store</a>
+        </div>
+      </section>
+      <section class="card">
+        <div class="badge">iOS</div>
+        <h2>App Store</h2>
+        <img
+          alt="QR code for the Elvora App Store listing"
+          width="220"
+          height="220"
+          src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=https%3A%2F%2Fapps.apple.com%2Fapp%2Fnfbot%2Fid6750000001"
+        >
+        <div>
+          <a class="btn" href="https://apps.apple.com/app/nfbot/id6750000001">Open App Store</a>
+        </div>
+      </section>
+    </div>
+    <div class="note">
+      Store pages appear after publishing. To run a development build, connect the phone and use <code>flutter run</code>. iOS builds need a Mac with Xcode.
+      Until then, the <a class="back" href="https://arnold-rg.github.io/elvora/app/">web app</a> is the public way in.
+    </div>
+  </main>
+</body>
+</html>
