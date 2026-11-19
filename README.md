@@ -68,13 +68,6 @@ Use least privilege, documented trust boundaries and secret scanning. Never incl
 
 **Important:** This table defines the target quality process, not a claim that every check has passed. Kubernetes is optional and should be introduced only when real backend complexity and scale justify it.
 
-## Improvement roadmap
-
-1. Record platform build/test matrix and minimum supported OS versions.
-2. Review data flows, permission prompts and accessibility.
-3. Add Flutter analysis, tests and signed release workflows with protected credentials.
-4. Validate each native platform and store distribution separately.
-
 ## Working on the project
 
 Keep changes small and reviewable. Update this README when commands or features change, attach test evidence to pull requests, maintain honest limitations and review licenses before adding assets. The repository owner approves release publication.
