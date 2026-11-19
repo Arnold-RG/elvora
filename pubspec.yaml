@@ -25,7 +25,7 @@ dependencies:
   flutter_tts: ^4.2.0
   local_auth: ^2.3.0
   shared_preferences: ^2.3.0
-  permission_handler: ^11.3.1
+  permission_handler: ^13.0.2
   audioplayers: ^6.1.0
   geolocator: ^14.0.2
   flutter_map: ^8.3.2
