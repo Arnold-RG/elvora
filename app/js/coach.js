@@ -107,7 +107,7 @@ export function coachContext() {
     goal: p.goal || null,
     activity: p.activity || null,
     targets: t ? { kcal: t.kcal ?? null, proteinG: t.proteinG ?? null, carbsG: t.carbsG ?? null, fatG: t.fatG ?? null, waterMl: t.waterMl, steps: t.steps } : null,
-    today: { kcal: d.kcal, proteinG: d.proteinG, waterMl: d.waterMl, sleepH: d.sleepH, meals: d.meals, steps: d.steps, activeMin: d.activeMin, workouts: d.workouts, weightKg: latestWeight() },
+    today: { kcal: Math.round(d.kcal), proteinG: Math.round(d.proteinG * 10) / 10, waterMl: Math.round(d.waterMl), sleepH: d.sleepH, meals: d.meals, steps: d.steps == null ? null : Math.round(d.steps), activeMin: Math.min(1440, Math.round(d.activeMin)), workouts: Math.min(20, d.workouts), weightKg: latestWeight() },
     hour: new Date().getHours(),
     readiness: r ? r.score : null,
     streakDays: streaks().current,
