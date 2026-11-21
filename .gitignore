@@ -83,3 +83,13 @@ Desktop.ini
 .cursor/
 
 .cursorrules
+
+# Secrets: never commit keys or env files
+*.key
+*.pem
+.env
+.env.*
+!.env.example
+secrets/
+.secrets/
+api/.venv/
