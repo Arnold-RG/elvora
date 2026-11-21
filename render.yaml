@@ -47,6 +47,8 @@ services:
     previews:
       generation: "off"
     buildCommand: pip install -r api/requirements.txt
+    # mirrors the service's existing (unused) publish-path field so adoption leaves it unchanged
+    staticPublishPath: public
     startCommand: uvicorn api.main:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips='*' --no-server-header
     envVars:
       - key: GEMINI_API_KEY
