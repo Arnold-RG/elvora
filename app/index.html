@@ -18,6 +18,16 @@
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="stylesheet" href="css/app.css">
 <script type="module" src="js/app.js"></script>
+<link rel="modulepreload" href="js/orb.js">
+<link rel="modulepreload" href="js/voice.js">
+<link rel="modulepreload" href="js/coach.js">
+<link rel="modulepreload" href="js/config.js">
+<link rel="modulepreload" href="js/store.js">
+<link rel="modulepreload" href="js/readiness.js">
+<link rel="modulepreload" href="js/foods.js">
+<link rel="modulepreload" href="js/charts.js">
+<link rel="modulepreload" href="js/reminders.js">
+<link rel="modulepreload" href="js/dom.js">
 </head>
 <body>
 <svg class="sprite" aria-hidden="true" focusable="false">
@@ -66,7 +76,7 @@
       <h1 class="title" id="h-today"><span id="greeting">Hello</span></h1>
       <p class="streak" id="streak"></p>
 
-      <button class="ask-card" type="button" data-goto="voice" aria-label="Talk to Elvora">
+      <button class="ask-card" type="button" data-goto="voice">
         <span class="ask-orb orb-slot" data-orb="mini" aria-hidden="true"></span>
         <span class="ask-text">
           <strong>Ask Elvora</strong>
@@ -388,7 +398,7 @@
         <ul class="bullets">
           <li>Everything you log stays in this browser’s storage on this device. There’s no account.</li>
           <li>When the AI coach is on, your question and a few numbers (today’s totals, your targets, goal and readiness score — no name, no meal descriptions) are sent to Elvora’s server and on to Google Gemini to write the reply. On Gemini’s free tier Google may use these requests to improve its products. Turn the AI coach off above to keep everything on the device.</li>
-          <li>The microphone turns on only after you tap the orb, and turns off when you stop or Elvora answers.</li>
+          <li>The microphone turns on only after you tap the orb, and turns off when you stop, when Elvora answers, or when you switch away from the app.</li>
           <li>Speech-to-text is done by your browser. Chrome sends the audio to Google’s speech service and Safari may use Apple’s. Elvora never records or stores audio.</li>
           <li>If the AI coach is off, busy or offline, replies come from Elvora’s built-in coach on this device.</li>
           <li>Elvora is a wellness coach, not a medical service. For pain, illness or medical questions, see a clinician.</li>

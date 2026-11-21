@@ -32,8 +32,9 @@ function load() {
 }
 function save() {
   try { localStorage.setItem(KEY, JSON.stringify(data)); } catch { /* storage full or blocked */ }
-  listeners.forEach((fn) => fn(data));
+  notify();
 }
+function notify() { listeners.forEach((fn) => fn(data)); }
 const uid = () => (crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`);
 
 export const onChange = (fn) => listeners.add(fn);
@@ -116,7 +117,12 @@ export function parseImport(text) {
 }
 export function applyImport(parsed) { data = parsed; save(); }
 export function importJSON(text) { applyImport(parseImport(text)); }
-export function wipe() { data = blank(); try { localStorage.removeItem(KEY); } catch {} save(); }
+/** Delete all stored data: the key is removed, not rewritten blank (it is written again only when something new is logged). */
+export function wipe() {
+  data = blank();
+  try { localStorage.removeItem(KEY); localStorage.removeItem('elvora.reminders.fired'); } catch {}
+  notify();
+}
 
 // ---- targets (formulas ported from lib/core/utils/fitness_calculator.dart) ----
 const MULT = { sedentary: 1.2, light: 1.375, moderate: 1.55, active: 1.725, athlete: 1.9 };

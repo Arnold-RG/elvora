@@ -1,10 +1,10 @@
 // Elvora service worker: offline app shell. Bump VERSION on every release.
-const VERSION = 'elvora-v1.1.0';
+const VERSION = 'elvora-v1.1.1';
 const SHELL = [
   './', './index.html', './manifest.webmanifest', './css/app.css',
   './js/app.js', './js/orb.js', './js/voice.js', './js/coach.js', './js/store.js', './js/config.js',
   './js/dom.js', './js/foods.js', './js/readiness.js', './js/charts.js', './js/reminders.js',
-  './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png', './privacy.html',
+  './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png', './icons/apple-touch-icon.png', './privacy.html',
 ];
 
 self.addEventListener('install', (e) => {
@@ -18,7 +18,7 @@ self.addEventListener('fetch', (e) => {
   if (req.method !== 'GET' || new URL(req.url).origin !== self.location.origin) return; // API calls go straight to the network
   // network-first for navigations so updates land
   if (req.mode === 'navigate') {
-    e.respondWith(fetch(req).then((res) => { const copy = res.clone(); caches.open(VERSION).then((c) => c.put('./index.html', copy)); return res; }).catch(() => caches.match('./index.html')));
+    e.respondWith(fetch(req).then((res) => { if (res.ok) { const copy = res.clone(); caches.open(VERSION).then((c) => c.put('./index.html', copy)); } return res; }).catch(() => caches.match('./index.html')));
     return;
   }
   // stale-while-revalidate: answer from cache, refresh it in the background

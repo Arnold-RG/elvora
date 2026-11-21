@@ -115,7 +115,7 @@ function webglSupported() {
     return !!(c.getContext('webgl', { failIfMajorPerformanceCaveat: false }) || c.getContext('experimental-webgl'));
   } catch { return false; }
 }
-const HAS_GL = webglSupported();
+let HAS_GL = null; // probed on first use, not at module load
 
 export class Orb {
   /**
@@ -126,7 +126,9 @@ export class Orb {
     this.slot = slot;
     this.maxDpr = opts.maxDpr ?? 3;
     this.minFrameMs = 1000 / (opts.fps ?? 60);
-    this.state = 'idle';
+    this.idleFrameMs = 1000 / (opts.idleFps ?? 24); // a calm idle orb costs far less main-thread time
+    this.state = STATE_TARGETS[opts.state] ? opts.state : 'idle';
+    slot.dataset.orbState = this.state;
     this.mix = { listen: 0, speak: 0, think: 0 };
     this.level = 0;          // smoothed level used for drawing
     this.levelSource = null; // () => 0..1
@@ -140,6 +142,7 @@ export class Orb {
     const canvas = document.createElement('canvas');
     canvas.setAttribute('aria-hidden', 'true');
     this.canvas = canvas;
+    if (HAS_GL === null) HAS_GL = webglSupported();
     if (HAS_GL && this.initGL()) this.mode = 'webgl';
     else if (canvas.getContext('2d')) { this.ctx = canvas.getContext('2d'); this.mode = '2d'; }
     if (this.mode === 'css') {
@@ -219,7 +222,8 @@ export class Orb {
   frame(now) {
     if (this.mode === 'css') return false;
     if (!this.visible || document.hidden || this.glLost) return false;
-    if (now - this.last < this.minFrameMs - 1) return true;
+    const calm = this.state === 'idle' && this.level < 0.01 && this.mix.listen + this.mix.speak + this.mix.think < 0.01;
+    if (now - this.last < (calm ? this.idleFrameMs : this.minFrameMs) - 1) return true;
     const dt = this.last ? Math.min(now - this.last, 100) : 16;
     this.last = now;
 

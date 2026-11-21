@@ -37,15 +37,30 @@ const voice = new Voice({
   onTranscript: (text) => { $('#transcript').textContent = text ? `“${text}”` : ''; },
   onNotice: (msg) => showNotice(msg),
 });
-function mountOrbs() {
-  for (const slot of $$('.orb-slot')) {
-    const kind = slot.dataset.orb;
-    orbs[kind] = new Orb(slot, { fps: kind === 'main' ? 60 : 30, maxDpr: kind === 'main' ? 2.5 : 3 });
-    orbs[kind].levelSource = () => voice.level();
-  }
+// Orbs start as a CSS placeholder and switch to WebGL lazily: the small ones once the page is idle after load,
+// the big one the first time the Voice screen opens. Keeps shader compiles and frames out of first load.
+let orbState = 'idle';
+function placeholdOrbs() {
+  for (const slot of $$('.orb-slot')) if (!slot.querySelector('.orb-css')) slot.append(h('span', { class: 'orb-css orb-placeholder' }));
+}
+function mountOrb(kind) {
+  if (orbs[kind]) return;
+  const slot = document.querySelector(`.orb-slot[data-orb="${kind}"]`);
+  if (!slot) return;
+  slot.querySelector('.orb-placeholder')?.remove();
+  orbs[kind] = new Orb(slot, { fps: kind === 'main' ? 60 : 30, idleFps: kind === 'main' ? 30 : 20, maxDpr: kind === 'main' ? 2.5 : 2, state: orbState });
+  orbs[kind].levelSource = () => voice.level();
+}
+function mountOrbsWhenIdle() {
+  const run = () => { mountOrb('fab'); mountOrb('mini'); };
+  const later = () => (window.requestIdleCallback ? requestIdleCallback(run, { timeout: 4000 }) : setTimeout(run, 1500));
+  if (document.readyState === 'complete') setTimeout(later, 1200); else window.addEventListener('load', () => setTimeout(later, 1200), { once: true });
 }
 function setOrbState(state) {
+  orbState = state;
   Object.values(orbs).forEach((o) => o.setState(state));
+  for (const s of $$('.orb-slot')) if (!orbs[s.dataset.orb]) s.dataset.orbState = state;
+  $('#orbButton').setAttribute('aria-pressed', String(state === 'listening'));
   $('#view-voice').dataset.state = state;
   $('#voiceState').textContent = STATE_TEXT[state];
   $('#orbButton').setAttribute('aria-label', state === 'listening' ? 'Stop listening' : state === 'speaking' ? 'Stop Elvora speaking' : 'Start talking to Elvora');
@@ -92,6 +107,7 @@ async function orbTap() {
 function go(view, { focus = false } = {}) {
   if (!TABS.includes(view) && !PAGES[view]) view = 'today';
   if (view === current) return;
+  if (view === 'voice') mountOrb('main');
   if (current === 'voice' && view !== 'voice') voice.stopAll();
   current = view;
   const tab = PAGES[view] || view;
@@ -228,6 +244,7 @@ function renderToday() {
 }
 
 /* ================= DIARY ================= */
+const dayShort = (key, dt) => (key === S.dayKey() ? 'Today' : dt.toLocaleDateString(undefined, { weekday: 'short' }).slice(0, 3));
 function renderDiary() {
   const strip = $('#dayStrip');
   strip.replaceChildren();
@@ -235,8 +252,9 @@ function renderDiary() {
     const [y, m, dd] = key.split('-').map(Number);
     const dt = new Date(y, m - 1, dd);
     const b = h('button', { type: 'button', class: `day${S.isLogged(key) ? ' has' : ''}`, role: 'tab', 'aria-selected': String(key === diaryDay),
-      'aria-label': dt.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' }), onclick: () => { diaryDay = key; renderDiary(); } },
-    h('small', { text: key === S.dayKey() ? 'Today' : dt.toLocaleDateString(undefined, { weekday: 'short' }).slice(0, 3) }), h('b', { text: String(dd) }), h('span', { class: 'dot' }));
+      onclick: () => { diaryDay = key; renderDiary(); } },
+    // accessible name = the visible text plus the full date, so the label always contains what is on screen
+    h('small', { text: dayShort(key, dt) }), ' ', h('b', { text: String(dd) }), h('span', { class: 'sr-only', text: `, ${dt.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' })}` }), h('span', { class: 'dot', 'aria-hidden': 'true' }));
     strip.append(b);
   }
   const dd = S.day(diaryDay);
@@ -592,7 +610,10 @@ function bind() {
     } catch (err) { toast(err.message || 'Couldn’t read that file'); }
   });
   $('#wipeBtn').addEventListener('click', () => {
-    if (confirm('Delete everything Elvora has stored on this device? This can’t be undone.')) { S.wipe(); $('#profileForm').reset(); applyMotion(); renderView(); toast('All data deleted'); }
+    if (confirm('Delete everything Elvora has stored on this device (your logs, settings and the offline copy of the app)? This can’t be undone.')) {
+      voice.stopAll(); S.wipe(); $('#profileForm').reset(); applyMotion(); renderView(); toast('All data deleted');
+      if (window.caches) caches.keys().then((ks) => Promise.all(ks.map((k) => caches.delete(k)))).catch(() => {});
+    }
   });
 
   let deferred = null;
@@ -604,7 +625,13 @@ function bind() {
 }
 
 /* ================= boot ================= */
-mountOrbs();
+// Never keep the microphone (or speech) running in the background: release it when the page is hidden or unloaded.
+document.addEventListener('visibilitychange', () => { if (document.hidden) voice.stopAll(); });
+window.addEventListener('pagehide', () => voice.stopAll());
+document.addEventListener('freeze', () => voice.stopAll());
+
+placeholdOrbs();
+mountOrbsWhenIdle();
 bind();
 applyMotion();
 $('#suggest').replaceChildren(...SUGGESTIONS.map((q) => h('button', { type: 'button', class: 'chip', text: q, onclick: () => sendChat(q) })));
