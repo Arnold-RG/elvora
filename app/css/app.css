@@ -505,3 +505,8 @@ input[type="range"] { padding: 0; min-height: 44px; accent-color: var(--cyan); b
 .link.inline { display: inline-flex; align-items: center; min-height: 24px; padding: 0 2px; margin: 0 -2px; vertical-align: baseline; }
 .link.inline.tap, .tap-link { display: inline-flex; align-items: center; min-height: 44px; padding: 0 6px; margin: 0 -6px; }
 .fine .link.inline.tap { vertical-align: middle; }
+
+/* focus ring on the main content after "Skip to main content" */
+#main:focus-visible, #main.skipped:focus { outline: 2px solid var(--cyan); outline-offset: -2px; border-radius: 12px; }
+/* source citation link: at least 24px tall */
+.cite-link { display: inline-flex; align-items: center; min-height: 24px; padding: 0 2px; margin: 0 -2px; vertical-align: baseline; }

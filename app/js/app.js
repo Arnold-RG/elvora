@@ -603,7 +603,12 @@ function bind() {
     document.body.append(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(a.href), 2000);
   });
-  $('#skipLink').addEventListener('click', () => { const m = $('#main'); m.focus({ preventScroll: false }); m.scrollIntoView({ block: 'start' }); });
+  // Skip link: move focus to the main content and show where it went (programmatic focus has no ring by default)
+  $('#main').addEventListener('blur', (e) => e.currentTarget.classList.remove('skipped'));
+  $('#skipLink').addEventListener('click', () => {
+    const m = $('#main'); m.classList.add('skipped');
+    m.focus({ preventScroll: false, focusVisible: true }); m.scrollIntoView({ block: 'start' });
+  });
   $('#importBtn').addEventListener('click', () => $('#importFile').click());
   $('#importFile').addEventListener('change', async (e) => {
     const file = e.target.files[0]; e.target.value = '';
