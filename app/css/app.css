@@ -249,7 +249,14 @@ input:focus, select:focus { outline: none; border-color: var(--cyan); box-shadow
 .view-voice[data-state="speaking"] .state-label::before { background: var(--violet); box-shadow: 0 0 10px var(--violet); }
 .stage-text { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; }
 .transcript { margin: 0; min-height: 1.4em; color: var(--muted); font-size: 15px; max-width: 34ch; }
-.reply { max-width: 36ch; font-size: 16px; line-height: 1.55; color: #dfe6f6; white-space: pre-line; }
+.reply { position: relative; max-width: 36ch; font-size: 16px; line-height: 1.55; color: #dfe6f6; white-space: pre-line; max-height: calc(1.55em * 6 + 24px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; }
+.reply::-webkit-scrollbar { display: none; }
+/* short portrait phones: keep orb, reply and the type box above the tab bar without scrolling */
+@media (max-height: 720px) and (orientation: portrait) {
+  .orb-stage { --orb: min(70vw, 34dvh, 380px); }
+  .reply { max-height: calc(1.55em * 4 + 20px); }
+  .view-voice .fine { display: none; }
+}
 .reply .w { opacity: .25; transition: opacity .25s; }
 .reply .w.on { opacity: 1; }
 .notice { margin: 4px 0 0; padding: 10px 14px; border-radius: 14px; background: rgba(255, 196, 92, .08); border: 1px solid rgba(255, 196, 92, .25); color: #ffd99a; font-size: 14px; max-width: 36ch; }

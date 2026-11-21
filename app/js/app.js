@@ -90,7 +90,11 @@ async function respond(question) {
   if (SRC_NOTE[src]) box.append(h('p', { class: 'reply-src', text: SRC_NOTE[src] }));
   await voice.speak(reply, {
     enabled: S.get().settings.speak,
-    onWord: (i) => { for (let k = 0; k < Math.min(i, spans.length); k++) spans[k].classList.add('on'); },
+    onWord: (i) => {
+      for (let k = 0; k < Math.min(i, spans.length); k++) spans[k].classList.add('on');
+      const cur = spans[Math.min(i, spans.length) - 1]; // keep the spoken word in view when a long reply scrolls
+      if (cur && box.scrollHeight > box.clientHeight) box.scrollTop = Math.max(0, cur.offsetTop - box.clientHeight / 2);
+    },
   });
 }
 async function orbTap() {
