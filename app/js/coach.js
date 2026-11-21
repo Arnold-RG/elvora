@@ -1,7 +1,9 @@
 // On-device coach. Ported from lib/core/intelligence/coach_knowledge.dart and
 // adapted to what the web app actually knows: logged meals, water, sleep and
 // the profile targets. Nothing is invented: when data is missing it says so.
-import { get, targets, totals } from './store.js';
+import { get, targets, totals, streaks, latestWeight } from './store.js';
+import { readiness } from './readiness.js';
+import { API_BASE, API_TIMEOUT_MS } from './config.js';
 
 const has = (q, words) => words.some((w) => q.includes(w));
 const n0 = (v) => Math.round(v).toLocaleString();
@@ -19,12 +21,10 @@ export function answer(message) {
     return 'I can’t assess pain, injury or illness. Please stop training and check with a clinician or a pharmacist. If it feels serious, call your local emergency number.';
   }
 
-  if (has(q, ['readiness', 'recovered', 'should i train', 'train today', 'rest day'])) {
-    const sleep = d.sleepH;
-    const base = 'I score readiness from overnight watch data, and watch pairing isn’t in the web app yet.';
-    if (sleep == null) return `${base} Log last night’s sleep in Diary and I can at least factor that in.`;
-    if (sleep < 6.5) return `${base} You logged ${sleep} hours of sleep, which is short — keep today moderate and move bedtime earlier tonight.`;
-    return `${base} You logged ${sleep} hours of sleep, so nothing from sleep says hold back. Listen to how your body feels during the warm-up.`;
+  if (has(q, ['readiness', 'recovered', 'recovery', 'should i train', 'train today', 'rest day'])) {
+    const r = readiness();
+    if (!r) return 'Do today’s recovery check-in (sleep, sleep quality, stress) under Today → Recovery and I’ll score your readiness.';
+    return `Your readiness is ${r.score} out of 100, in the ${r.band.toLowerCase()} band. My call for today: ${r.rec.toLowerCase()}.`;
   }
 
   if (has(q, ['calorie', 'kcal', 'how much can i eat', 'eat more', 'deficit', 'what to eat', 'what should i eat', 'dinner', 'lunch', 'breakfast', 'meal idea', 'eat next'])) {
@@ -53,22 +53,32 @@ export function answer(message) {
   }
 
   if (has(q, ['sleep', 'tired', 'exhausted', 'insomnia'])) {
-    if (d.sleepH == null) return 'You haven’t logged sleep for today. Add last night’s hours in Diary and I’ll tell you how to pace the day.';
+    if (d.sleepH == null) return 'You haven’t logged sleep for today. Do the recovery check-in under Today → Recovery and I’ll tell you how to pace the day.';
     return d.sleepH < 6.5
       ? `You logged ${d.sleepH} hours, which is short. Treat today as moderate, and move bedtime earlier tonight.`
       : `At ${d.sleepH} hours you’re in decent shape. Consistency beats one long night.`;
   }
 
   if (has(q, ['step', 'walk', 'cardio'])) {
-    return `Step counting needs the phone’s motion sensor, which the web app can’t read yet.${t ? ` Your step goal for your activity level is ${n0(t.steps)}.` : ''} A 20-minute walk usually covers about 2,000 steps — walking after your largest meal is the best use of the time.`;
+    if (d.steps == null) return `You haven’t logged steps today. Add them under Today → Activity${t ? ` — your goal is ${n0(t.steps)}` : ''}. A 20-minute walk usually covers about 2,000 steps.`;
+    if (t && d.steps < t.steps) return `You’re on ${n0(d.steps)} steps, ${n0(t.steps - d.steps)} short of your ${n0(t.steps)} goal. A 20-minute walk usually covers about 2,000 of those.`;
+    return `You’ve logged ${n0(d.steps)} steps today${t ? `, past your ${n0(t.steps)} goal` : ''}. Anything more is a bonus for recovery.`;
   }
 
-  if (has(q, ['workout', 'exercise', 'routine', 'session', 'gym', 'how long', 'plan'])) {
-    return 'Training plans live in the full Elvora app and aren’t in the web version yet. What I can do here: check your fuel and sleep before you train. Ask me “should I train today?” or “what should I eat next?”.';
+  if (has(q, ['workout', 'exercise', 'routine', 'session', 'gym', 'how long', 'plan', 'trained'])) {
+    const r = readiness();
+    const done = d.workouts ? `You’ve logged ${d.workouts} workout${d.workouts > 1 ? 's' : ''} today (${n0(d.activeMin)} active minutes). ` : '';
+    return `${done}${r ? `Readiness is ${r.score}, so ${r.rec.toLowerCase()}. ` : ''}Start a template under Today → Workouts — it logs your sets, reps and weight.`;
   }
 
   if (has(q, ['weight', 'lose', 'fat loss', 'gain', 'plateau', 'progress', 'goal'])) {
-    return 'Weight moves on weekly averages — weigh at the same time each morning. If the trend is flat for two weeks, change one lever: food, steps or training volume.';
+    const w = latestWeight();
+    return `${w ? `Your latest weight is ${w} kg. ` : 'Log your weight under Today → Progress to see the trend. '}Weight moves on weekly averages — weigh at the same time each morning. If the trend is flat for two weeks, change one lever: food, steps or training volume.`;
+  }
+
+  if (has(q, ['streak'])) {
+    const st = streaks();
+    return st.current ? `You’re on a ${st.current}-day logging streak (best ${st.best}). Log anything today to keep it going.` : 'No streak yet — log a meal, water or a workout today to start one.';
   }
 
   if (has(q, ['heart', 'bpm', 'hrv', 'pulse', 'watch', 'pair', 'connect'])) {
@@ -85,6 +95,47 @@ export function answer(message) {
 
   const k = t?.kcal ? `${n0(d.kcal)} of ${n0(t.kcal)} kcal` : `${n0(d.kcal)} kcal logged`;
   return `I can help with food, protein, water, sleep and whether to train. Right now you’re at ${k} and ${(d.waterMl / 1000).toFixed(1)} L of water.\n\nAsk me something concrete — for example “what should I eat next?”.`;
+}
+
+/** Minimal context for the AI coach: totals and targets only, no names or meal text. */
+export function coachContext() {
+  const p = get().profile || {};
+  const t = targets();
+  const d = totals();
+  const r = readiness();
+  return {
+    goal: p.goal || null,
+    activity: p.activity || null,
+    targets: t ? { kcal: t.kcal ?? null, proteinG: t.proteinG ?? null, carbsG: t.carbsG ?? null, fatG: t.fatG ?? null, waterMl: t.waterMl, steps: t.steps } : null,
+    today: { kcal: d.kcal, proteinG: d.proteinG, waterMl: d.waterMl, sleepH: d.sleepH, meals: d.meals, steps: d.steps, activeMin: d.activeMin, workouts: d.workouts, weightKg: latestWeight() },
+    hour: new Date().getHours(),
+    readiness: r ? r.score : null,
+    streakDays: streaks().current,
+  };
+}
+
+/** Ask the AI coach; falls back to the built-in coach on any problem. */
+export async function askCoach(message) {
+  if (get().settings.aiCoach !== false && API_BASE) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), API_TIMEOUT_MS);
+    try {
+      const res = await fetch(`${API_BASE}/api/coach`, {
+        method: 'POST', headers: { 'content-type': 'application/json' }, signal: ctrl.signal, credentials: 'omit',
+        body: JSON.stringify({ message: message.slice(0, 500), context: coachContext() }),
+      });
+      const j = await res.json().catch(() => null);
+      if (res.ok && j?.ok && j.reply) return { text: j.reply, src: 'ai' };
+    } catch { /* offline, timeout or blocked */ } finally { clearTimeout(timer); }
+    return { text: answer(message), src: 'offline' };
+  }
+  return { text: answer(message), src: 'builtin' };
+}
+
+/** Wake the free-tier API early so the first question isn't slow. */
+export function warmCoach() {
+  if (get().settings.aiCoach === false || !API_BASE) return;
+  fetch(`${API_BASE}/health`, { credentials: 'omit', mode: 'no-cors' }).catch(() => {});
 }
 
 export const SUGGESTIONS = ['What should I eat next?', 'Protein check', 'How’s my water?', 'Should I train today?', 'How did I sleep?'];

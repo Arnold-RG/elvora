@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; font-src 'self'; connect-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; font-src 'self'; connect-src 'self' https://elvora-api-preview.onrender.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Elvora — AI fitness &amp; nutrition coach</title>
 <meta name="description" content="Elvora is an AI fitness and nutrition coach. Log meals, water and sleep, and talk to Elvora by voice. Your data stays on this device.">
@@ -39,6 +39,15 @@
   <symbol id="i-steps" viewBox="0 0 24 24"><path d="M8 4.5c1.7 0 2.5 1.8 2.5 4S9.6 13 8 13s-2.5-2.3-2.5-4.5S6.3 4.5 8 4.5zM16 9c1.7 0 2.5 1.8 2.5 4s-.9 4.5-2.5 4.5-2.5-2.3-2.5-4.5S14.3 9 16 9zM6.5 15.5h3v2a1.5 1.5 0 0 1-3 0zM14.5 19.5h3v.5a1.5 1.5 0 0 1-3 0z"/></symbol>
   <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11M7 10.5l5 5 5-5M5 19.5h14"/></symbol>
   <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></symbol>
+  <symbol id="i-food" viewBox="0 0 24 24"><path d="M7 3.5v7a2 2 0 0 0 2 2v8M5 3.5v5M9 3.5v5M16.5 20.5v-17c-2 1-3.5 3.5-3.5 7 0 1.5 1 2.5 2 2.5h1.5"/></symbol>
+  <symbol id="i-dumbbell" viewBox="0 0 24 24"><path d="M3.5 9.5v5M6.5 7v10M17.5 7v10M20.5 9.5v5M6.5 12h11"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4.5 19.5h15M7 16v-4M11 16V8M15 16v-6M19 16V5.5"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6.5 16.5V11a5.5 5.5 0 0 1 11 0v5.5l1.5 2H5zM10 20.5a2 2 0 0 0 4 0"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 19.5s-7.5-4.4-7.5-10A4 4 0 0 1 12 7.3a4 4 0 0 1 7.5 2.2c0 5.6-7.5 10-7.5 10z"/><path d="M7.5 12h2.5l1.2-2 1.8 4 1.2-2h2.3"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 15.5V4.5M7 9l5-5 5 5M5 19.5h14"/></symbol>
+  <symbol id="i-run" viewBox="0 0 24 24"><circle cx="14.5" cy="4.8" r="1.8"/><path d="M9 20.5l2.5-5 2.5 2v4M7.5 11l2.5-3h4l2 3 2.5 1M11.5 15.5l1-5"/></symbol>
 </svg>
 
 <div class="app" id="app">
@@ -55,6 +64,7 @@
     <section class="view" id="view-today" data-view="today" aria-labelledby="h-today">
       <p class="eyebrow" id="todayDate"></p>
       <h1 class="title" id="h-today"><span id="greeting">Hello</span></h1>
+      <p class="streak" id="streak"></p>
 
       <button class="ask-card" type="button" data-goto="voice" aria-label="Talk to Elvora">
         <span class="ask-orb orb-slot" data-orb="mini" aria-hidden="true"></span>
@@ -74,33 +84,37 @@
         <p class="hint" id="targetsHint" hidden>Set your body details in <button class="link inline" type="button" data-goto="you">You</button> to get calorie, protein and water targets.</p>
       </div>
 
+      <h2 class="section-title">Features</h2>
+      <div class="hub" id="hub">
+        <a class="hub-tile" href="#food" data-goto="food"><span class="hub-ic c1"><svg class="ic" aria-hidden="true"><use href="#i-food"/></svg></span><b>Food log</b><small id="hubFood">Search 7,793 foods</small></a>
+        <a class="hub-tile" href="#workout" data-goto="workout"><span class="hub-ic c2"><svg class="ic" aria-hidden="true"><use href="#i-dumbbell"/></svg></span><b>Workouts</b><small id="hubWorkout">Sets, reps, weight</small></a>
+        <a class="hub-tile" href="#activity" data-goto="activity"><span class="hub-ic c3"><svg class="ic" aria-hidden="true"><use href="#i-run"/></svg></span><b>Activity</b><small id="hubActivity">Steps and sessions</small></a>
+        <a class="hub-tile" href="#recovery" data-goto="recovery"><span class="hub-ic c4"><svg class="ic" aria-hidden="true"><use href="#i-heart"/></svg></span><b>Recovery</b><small id="hubRecovery">Check-in &amp; readiness</small></a>
+        <a class="hub-tile" href="#progress" data-goto="progress"><span class="hub-ic c5"><svg class="ic" aria-hidden="true"><use href="#i-chart"/></svg></span><b>Progress</b><small id="hubProgress">Weekly charts</small></a>
+        <a class="hub-tile" href="#reminders" data-goto="reminders"><span class="hub-ic c6"><svg class="ic" aria-hidden="true"><use href="#i-bell"/></svg></span><b>Reminders</b><small id="hubReminders">Water &amp; meals</small></a>
+      </div>
+
+      <div class="card readiness-card" id="readinessCard"></div>
+
       <div class="grid2">
         <div class="card mini-card">
           <svg class="ic mini-ic" aria-hidden="true"><use href="#i-moon"/></svg>
           <h3>Sleep</h3>
           <p class="big" id="sleepStat">—</p>
-          <p class="muted small" id="sleepNote">Log last night in Diary</p>
+          <p class="muted small" id="sleepNote">Do your recovery check-in</p>
         </div>
         <div class="card mini-card">
           <svg class="ic mini-ic" aria-hidden="true"><use href="#i-steps"/></svg>
           <h3>Steps</h3>
-          <p class="big muted">—</p>
-          <p class="muted small" id="stepNote">Step counting needs the phone app</p>
-        </div>
-      </div>
-
-      <div class="card empty-card">
-        <svg class="ic" aria-hidden="true"><use href="#i-watch"/></svg>
-        <div>
-          <h3>Readiness</h3>
-          <p class="muted small">Readiness is scored from overnight watch data (heart rate, HRV, sleep). Watch pairing isn’t available in the web app yet, so there is no score to show.</p>
+          <p class="big" id="stepStat">—</p>
+          <p class="muted small" id="stepNote">Log steps in Activity</p>
         </div>
       </div>
 
       <div class="card">
         <div class="card-head">
           <h2>Meals today</h2>
-          <button class="chip" type="button" data-action="add-meal"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg>Log meal</button>
+          <button class="chip" type="button" data-goto="food"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg>Log food</button>
         </div>
         <ul class="list" id="todayMeals"></ul>
       </div>
@@ -115,7 +129,7 @@
       <div class="card">
         <div class="card-head">
           <h2>Meals</h2>
-          <button class="chip" type="button" data-action="add-meal"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg>Log meal</button>
+          <button class="chip" type="button" data-goto="food" id="diaryAddFood"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg>Log food</button>
         </div>
         <ul class="list" id="diaryMeals"></ul>
         <p class="total" id="diaryTotal"></p>
@@ -136,14 +150,13 @@
       </div>
 
       <div class="card">
-        <div class="card-head"><h2>Sleep</h2></div>
-        <form class="inline-form" id="sleepForm">
-          <label for="sleepInput">Hours slept the night before</label>
-          <div class="field-row">
-            <input id="sleepInput" name="sleep" type="number" inputmode="decimal" min="0" max="16" step="0.25" placeholder="e.g. 7.5">
-            <button class="btn" type="submit">Save</button>
-          </div>
-        </form>
+        <div class="card-head"><h2>Training &amp; activity</h2><button class="link" type="button" data-goto="workout">Workouts</button></div>
+        <ul class="list" id="diaryTraining"></ul>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h2>Recovery &amp; body</h2><button class="link" type="button" data-goto="recovery">Check-in</button></div>
+        <dl class="targets" id="diaryBody"></dl>
       </div>
     </section>
 
@@ -180,6 +193,143 @@
         <input id="chatText" type="text" enterkeyhint="send" placeholder="Ask about food, training, sleep…" maxlength="300">
         <button class="icon-btn" type="submit" aria-label="Send"><svg class="ic" aria-hidden="true"><use href="#i-send"/></svg></button>
       </form>
+    </section>
+
+    <!-- FOOD -->
+    <section class="view" id="view-food" data-view="food" data-parent="today" aria-labelledby="h-food" hidden>
+      <button class="back" type="button" data-back><svg class="ic" aria-hidden="true"><use href="#i-back"/></svg>Back</button>
+      <h1 class="title" id="h-food">Food log</h1>
+      <p class="muted small sub-for" id="foodFor"></p>
+      <div class="search">
+        <svg class="ic" aria-hidden="true"><use href="#i-search"/></svg>
+        <label class="sr-only" for="foodSearch">Search foods</label>
+        <input id="foodSearch" type="search" placeholder="Search foods, e.g. banana, oats, chicken" autocomplete="off" enterkeyhint="search">
+      </div>
+      <ul class="list results" id="foodResults" aria-live="polite"></ul>
+      <div class="card" id="recentCard">
+        <div class="card-head"><h2>Recent</h2></div>
+        <ul class="list" id="recentFoods"></ul>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2>Manual entry</h2></div>
+        <form class="form-grid" id="manualFood" autocomplete="off">
+          <label class="span2">Food or meal <input name="name" type="text" required maxlength="60" placeholder="e.g. Rice, beans and chicken"></label>
+          <label>Calories <input name="kcal" type="number" inputmode="numeric" min="0" max="5000" required placeholder="kcal"></label>
+          <label>Protein <input name="protein" type="number" inputmode="decimal" min="0" max="400" step="0.1" placeholder="g"></label>
+          <label>Carbs <input name="carbs" type="number" inputmode="decimal" min="0" max="800" step="0.1" placeholder="g"></label>
+          <label>Fat <input name="fat" type="number" inputmode="decimal" min="0" max="400" step="0.1" placeholder="g"></label>
+          <button class="btn wide span2" type="submit">Add to log</button>
+        </form>
+      </div>
+      <p class="muted small cite">Food data: <a href="https://fdc.nal.usda.gov/" rel="noopener">USDA FoodData Central</a>, SR Legacy (2018), public domain (CC0 1.0). Values are per 100 g.</p>
+    </section>
+
+    <!-- WORKOUT -->
+    <section class="view" id="view-workout" data-view="workout" data-parent="today" aria-labelledby="h-workout" hidden>
+      <button class="back" type="button" data-back><svg class="ic" aria-hidden="true"><use href="#i-back"/></svg>Back</button>
+      <h1 class="title" id="h-workout">Workouts</h1>
+      <div class="card">
+        <div class="card-head"><h2>Start a workout</h2></div>
+        <div class="templates" id="templates"></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2>History</h2><span class="muted small" id="workoutCount"></span></div>
+        <ul class="list" id="workoutHistory"></ul>
+      </div>
+    </section>
+
+    <!-- ACTIVITY -->
+    <section class="view" id="view-activity" data-view="activity" data-parent="today" aria-labelledby="h-activity" hidden>
+      <button class="back" type="button" data-back><svg class="ic" aria-hidden="true"><use href="#i-back"/></svg>Back</button>
+      <h1 class="title" id="h-activity">Activity &amp; steps</h1>
+      <div class="card">
+        <div class="card-head"><h2>Steps today</h2><span class="muted small" id="stepGoal"></span></div>
+        <p class="big" id="stepsBig">—</p>
+        <div class="bar" aria-hidden="true"><span id="stepsBar"></span></div>
+        <form class="field-row mt" id="stepsForm">
+          <label class="sr-only" for="stepsInput">Steps today</label>
+          <input id="stepsInput" type="number" inputmode="numeric" min="0" max="100000" placeholder="Steps from your phone or watch">
+          <button class="btn" type="submit">Save</button>
+        </form>
+        <p class="muted small">Copy today’s count from your phone’s health app or watch. Browsers can’t count steps reliably in the background, so the web app doesn’t guess.</p>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2>Log an activity</h2></div>
+        <form class="form-grid" id="activityForm">
+          <label>Type
+            <select name="type"><option>Walk</option><option>Run</option><option>Cycle</option><option>Swim</option><option>Yoga</option><option>Sport</option><option>Other</option></select>
+          </label>
+          <label>Minutes <input name="minutes" type="number" inputmode="numeric" min="1" max="600" required placeholder="min"></label>
+          <label class="span2">Distance (optional) <input name="km" type="number" inputmode="decimal" min="0" max="300" step="0.01" placeholder="km"></label>
+          <button class="btn wide span2" type="submit">Add activity</button>
+        </form>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2>Today’s activities</h2><span class="muted small" id="activeMin"></span></div>
+        <ul class="list" id="activityList"></ul>
+      </div>
+    </section>
+
+    <!-- RECOVERY -->
+    <section class="view" id="view-recovery" data-view="recovery" data-parent="today" aria-labelledby="h-recovery" hidden>
+      <button class="back" type="button" data-back><svg class="ic" aria-hidden="true"><use href="#i-back"/></svg>Back</button>
+      <h1 class="title" id="h-recovery">Recovery check-in</h1>
+      <div class="card readiness-card" id="readinessDetail"></div>
+      <form class="card form-grid" id="checkinForm">
+        <h2 class="span2">How did you recover?</h2>
+        <label>Sleep (hours) <input name="sleepH" type="number" inputmode="decimal" min="0" max="16" step="0.25" required placeholder="e.g. 7.5"></label>
+        <label>Resting HR (optional) <input name="restingHr" type="number" inputmode="numeric" min="30" max="130" placeholder="bpm"></label>
+        <label class="span2">Sleep quality <span class="range-val" id="sleepQVal">70%</span>
+          <input name="sleepQ" type="range" min="0" max="100" step="5" value="70">
+        </label>
+        <label class="span2">Stress <span class="range-val" id="stressVal">4 / 10</span>
+          <input name="stress" type="range" min="1" max="10" step="1" value="4">
+        </label>
+        <button class="btn wide span2" type="submit">Save check-in</button>
+      </form>
+      <p class="muted small">Readiness uses the formula from Elvora’s readiness engine: sleep 28%, resting heart rate 20%, training load 14% and stress 8%. HRV (30%) needs a watch, so it’s left out and the other weights are scaled up. Resting HR counts once you have 3 earlier readings. Load compares your last 7 days of active minutes with your 4-week average.</p>
+    </section>
+
+    <!-- PROGRESS -->
+    <section class="view" id="view-progress" data-view="progress" data-parent="today" aria-labelledby="h-progress" hidden>
+      <button class="back" type="button" data-back><svg class="ic" aria-hidden="true"><use href="#i-back"/></svg>Back</button>
+      <h1 class="title" id="h-progress">This week</h1>
+      <div class="card"><div class="card-head"><h2>Calories</h2><span class="muted small" id="kcalAvg"></span></div><div id="chartKcal"></div></div>
+      <div class="card"><div class="card-head"><h2>Protein</h2><span class="muted small" id="proteinAvg"></span></div><div id="chartProtein"></div></div>
+      <div class="card"><div class="card-head"><h2>Water</h2><span class="muted small" id="waterAvg"></span></div><div id="chartWater"></div></div>
+      <div class="card">
+        <div class="card-head"><h2>Weight</h2><span class="muted small" id="weightNow"></span></div>
+        <div id="chartWeight"></div>
+        <form class="field-row mt" id="weightForm">
+          <label class="sr-only" for="weightInput">Today’s weight in kg</label>
+          <input id="weightInput" type="number" inputmode="decimal" min="30" max="300" step="0.1" placeholder="Today’s weight (kg)">
+          <button class="btn" type="submit">Log</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- REMINDERS -->
+    <section class="view" id="view-reminders" data-view="reminders" data-parent="today" aria-labelledby="h-reminders" hidden>
+      <button class="back" type="button" data-back><svg class="ic" aria-hidden="true"><use href="#i-back"/></svg>Back</button>
+      <h1 class="title" id="h-reminders">Reminders</h1>
+      <div class="card">
+        <p class="muted small" id="notifStatus"></p>
+        <button class="btn wide" type="button" id="notifAllow">Allow notifications</button>
+      </div>
+      <div class="card">
+        <label class="toggle"><span>Water reminders</span><input type="checkbox" id="remWater"><span class="switch" aria-hidden="true"></span></label>
+        <label class="row-label">Every
+          <select id="remWaterEvery"><option value="60">1 hour</option><option value="90">1.5 hours</option><option value="120">2 hours</option><option value="180">3 hours</option></select>
+        </label>
+        <label class="toggle"><span>Meal reminders</span><input type="checkbox" id="remMeals"><span class="switch" aria-hidden="true"></span></label>
+        <div class="field-row three" id="mealTimes">
+          <label>Breakfast <input type="time" data-meal="0"></label>
+          <label>Lunch <input type="time" data-meal="1"></label>
+          <label>Dinner <input type="time" data-meal="2"></label>
+        </div>
+        <button class="chip mt" type="button" id="notifTest"><svg class="ic" aria-hidden="true"><use href="#i-bell"/></svg>Send a test</button>
+      </div>
+      <p class="muted small">Water reminders run between 08:00 and 22:00. Browsers can’t schedule notifications for a closed web app, so reminders arrive while Elvora is open or running in the background.</p>
     </section>
 
     <!-- YOU -->
@@ -227,27 +377,32 @@
 
       <div class="card">
         <h2>Settings</h2>
+        <label class="toggle"><span>AI coach (Google Gemini)<small class="muted">Off = built-in coach only, nothing leaves the device</small></span><input type="checkbox" id="setAi" checked><span class="switch" aria-hidden="true"></span></label>
         <label class="toggle"><span>Speak Elvora’s replies</span><input type="checkbox" id="setSpeak" checked><span class="switch" aria-hidden="true"></span></label>
         <label class="toggle"><span>Reduce motion</span><input type="checkbox" id="setMotion"><span class="switch" aria-hidden="true"></span></label>
+        <button class="toggle linkrow" type="button" data-goto="reminders"><span>Reminders</span><svg class="ic" aria-hidden="true"><use href="#i-chevron"/></svg></button>
       </div>
 
       <div class="card" id="privacy">
         <h2><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg> Privacy &amp; voice data</h2>
         <ul class="bullets">
-          <li>Everything you log stays in this browser’s storage on this device. Elvora’s web app has no account and sends your logs nowhere.</li>
+          <li>Everything you log stays in this browser’s storage on this device. There’s no account.</li>
+          <li>When the AI coach is on, your question and a few numbers (today’s totals, your targets, goal and readiness score — no name, no meal descriptions) are sent to Elvora’s server and on to Google Gemini to write the reply. On Gemini’s free tier Google may use these requests to improve its products. Turn the AI coach off above to keep everything on the device.</li>
           <li>The microphone turns on only after you tap the orb, and turns off when you stop or Elvora answers.</li>
           <li>Speech-to-text is done by your browser. Chrome sends the audio to Google’s speech service and Safari may use Apple’s. Elvora never records or stores audio.</li>
-          <li>Replies come from Elvora’s on-device coach, using your logged numbers.</li>
+          <li>If the AI coach is off, busy or offline, replies come from Elvora’s built-in coach on this device.</li>
           <li>Elvora is a wellness coach, not a medical service. For pain, illness or medical questions, see a clinician.</li>
         </ul>
         <p class="small"><a href="privacy.html">Full privacy note</a></p>
         <div class="row-btns">
           <button class="chip" type="button" id="exportBtn"><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg>Export my data</button>
+          <button class="chip" type="button" id="importBtn"><svg class="ic" aria-hidden="true"><use href="#i-upload"/></svg>Import</button>
+          <input type="file" id="importFile" accept="application/json,.json" hidden>
           <button class="chip danger" type="button" id="wipeBtn"><svg class="ic" aria-hidden="true"><use href="#i-trash"/></svg>Delete all data</button>
         </div>
       </div>
 
-      <p class="foot muted small">Elvora web app · v1.0 preview · <a href="https://github.com/Arnold-RG/elvora" rel="noopener">Source on GitHub</a></p>
+      <p class="foot muted small">Elvora web app · v1.1 preview · <a href="https://github.com/Arnold-RG/elvora" rel="noopener">Source on GitHub</a></p>
     </section>
   </main>
 
@@ -266,22 +421,7 @@
   </nav>
 </div>
 
-<dialog class="sheet" id="mealSheet" aria-labelledby="mealTitle">
-  <form method="dialog" class="sheet-body" id="mealForm">
-    <div class="sheet-grip" aria-hidden="true"></div>
-    <div class="card-head">
-      <h2 id="mealTitle">Log a meal</h2>
-      <button class="icon-btn ghost" type="button" value="cancel" id="mealClose" aria-label="Close"><svg class="ic" aria-hidden="true"><use href="#i-close"/></svg></button>
-    </div>
-    <label>What did you eat? <input name="name" type="text" required maxlength="60" placeholder="e.g. Rice, beans and chicken"></label>
-    <div class="field-row two">
-      <label>Calories <input name="kcal" type="number" inputmode="numeric" min="0" max="5000" required placeholder="kcal"></label>
-      <label>Protein <input name="protein" type="number" inputmode="decimal" min="0" max="400" step="0.5" placeholder="g"></label>
-    </div>
-    <p class="muted small">Enter the numbers from the label or your own estimate. Elvora doesn’t guess them for you.</p>
-    <button class="btn wide" type="submit" value="save">Save meal</button>
-  </form>
-</dialog>
+
 
 <noscript><p class="noscript">Elvora needs JavaScript to run.</p></noscript>
 </body>
