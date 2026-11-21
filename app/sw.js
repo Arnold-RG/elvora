@@ -1,5 +1,5 @@
 // Elvora service worker: offline app shell. Bump VERSION on every release.
-const VERSION = 'elvora-v1.0.0';
+const VERSION = 'elvora-v1.0.1';
 const SHELL = [
   './', './index.html', './manifest.webmanifest', './css/app.css',
   './js/app.js', './js/orb.js', './js/voice.js', './js/coach.js', './js/store.js',
@@ -15,13 +15,15 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   const req = e.request;
   if (req.method !== 'GET' || new URL(req.url).origin !== self.location.origin) return;
-  // network-first for navigations so updates land; cache-first for assets
+  // network-first for navigations so updates land
   if (req.mode === 'navigate') {
     e.respondWith(fetch(req).then((res) => { const copy = res.clone(); caches.open(VERSION).then((c) => c.put('./index.html', copy)); return res; }).catch(() => caches.match('./index.html')));
     return;
   }
-  e.respondWith(caches.match(req).then((hit) => hit || fetch(req).then((res) => {
-    if (res.ok) { const copy = res.clone(); caches.open(VERSION).then((c) => c.put(req, copy)); }
-    return res;
+  // stale-while-revalidate: answer from cache, refresh it in the background
+  e.respondWith(caches.open(VERSION).then((c) => c.match(req).then((hit) => {
+    const net = fetch(req).then((res) => { if (res.ok) c.put(req, res.clone()); return res; }).catch(() => hit);
+    if (hit) { e.waitUntil(net); return hit; }
+    return net;
   })));
 });
