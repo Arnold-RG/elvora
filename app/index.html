@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; font-src 'self'; connect-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Elvora — AI fitness &amp; nutrition coach</title>
+<meta name="description" content="Elvora is an AI fitness and nutrition coach. Log meals, water and sleep, and talk to Elvora by voice. Your data stays on this device.">
+<meta name="theme-color" content="#05060b">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Elvora">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="css/app.css">
+<script type="module" src="js/app.js"></script>
+</head>
+<body>
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-today" viewBox="0 0 24 24"><path d="M4 11.5 12 5l8 6.5V19a1 1 0 0 1-1 1h-4.5v-5h-5v5H5a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="i-diary" viewBox="0 0 24 24"><path d="M6 4h10a2 2 0 0 1 2 2v14H8a2 2 0 0 1-2-2z"/><path d="M6 18a2 2 0 0 1 2-2h10"/><path d="M10 8h5M10 11h3"/></symbol>
+  <symbol id="i-coach" viewBox="0 0 24 24"><path d="M5 6.5A2.5 2.5 0 0 1 7.5 4h9A2.5 2.5 0 0 1 19 6.5v7a2.5 2.5 0 0 1-2.5 2.5H11l-4 3.5V16h0A2 2 0 0 1 5 14z"/><path d="M9 9.5h6M9 12.5h4"/></symbol>
+  <symbol id="i-you" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 19.5c1.2-3.3 3.9-5 7-5s5.8 1.7 7 5"/></symbol>
+  <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3.5" width="6" height="11" rx="3"/><path d="M6 11.5a6 6 0 0 0 12 0M12 17.5v3"/></symbol>
+  <symbol id="i-stop" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="2.5"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M5 12h12M12 6l6 6-6 6"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 3.5s6 6.4 6 10.5a6 6 0 0 1-12 0c0-4.1 6-10.5 6-10.5z"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M19 14.5A7.5 7.5 0 0 1 9.5 5 7.5 7.5 0 1 0 19 14.5z"/></symbol>
+  <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 3.5c3.5 3 6 6.2 6 10a6 6 0 0 1-12 0c0-2 .8-3.6 2-5 .3 1.7 1.2 2.8 2.5 3.2C10 9 10.5 6 12 3.5z"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3.5 19 6v5.5c0 4.4-3 7.7-7 9-4-1.3-7-4.6-7-9V6z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-watch" viewBox="0 0 24 24"><rect x="7" y="6.5" width="10" height="11" rx="3"/><path d="M9 6.5 9.5 3h5l.5 3.5M9 17.5l.5 3.5h5l.5-3.5M12 10v2.2l1.4 1"/></symbol>
+  <symbol id="i-steps" viewBox="0 0 24 24"><path d="M8 4.5c1.7 0 2.5 1.8 2.5 4S9.6 13 8 13s-2.5-2.3-2.5-4.5S6.3 4.5 8 4.5zM16 9c1.7 0 2.5 1.8 2.5 4s-.9 4.5-2.5 4.5-2.5-2.3-2.5-4.5S14.3 9 16 9zM6.5 15.5h3v2a1.5 1.5 0 0 1-3 0zM14.5 19.5h3v.5a1.5 1.5 0 0 1-3 0z"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11M7 10.5l5 5 5-5M5 19.5h14"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+</svg>
+
+<div class="app" id="app">
+  <header class="topbar" id="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-name">Elvora</span>
+    </div>
+    <button class="chip install-btn" id="installBtn" type="button" hidden>Install app</button>
+  </header>
+
+  <main id="main" class="main" tabindex="-1">
+    <!-- TODAY -->
+    <section class="view" id="view-today" data-view="today" aria-labelledby="h-today">
+      <p class="eyebrow" id="todayDate"></p>
+      <h1 class="title" id="h-today"><span id="greeting">Hello</span></h1>
+
+      <button class="ask-card" type="button" data-goto="voice" aria-label="Talk to Elvora">
+        <span class="ask-orb orb-slot" data-orb="mini" aria-hidden="true"></span>
+        <span class="ask-text">
+          <strong>Ask Elvora</strong>
+          <span>Tap and speak — food, training, water, sleep.</span>
+        </span>
+        <svg class="ic ask-go" aria-hidden="true"><use href="#i-chevron"/></svg>
+      </button>
+
+      <div class="card rings-card">
+        <div class="card-head">
+          <h2>Today’s fuel</h2>
+          <button class="link" type="button" data-goto="diary">Open diary</button>
+        </div>
+        <div class="rings" id="rings"></div>
+        <p class="hint" id="targetsHint" hidden>Set your body details in <button class="link inline" type="button" data-goto="you">You</button> to get calorie, protein and water targets.</p>
+      </div>
+
+      <div class="grid2">
+        <div class="card mini-card">
+          <svg class="ic mini-ic" aria-hidden="true"><use href="#i-moon"/></svg>
+          <h3>Sleep</h3>
+          <p class="big" id="sleepStat">—</p>
+          <p class="muted small" id="sleepNote">Log last night in Diary</p>
+        </div>
+        <div class="card mini-card">
+          <svg class="ic mini-ic" aria-hidden="true"><use href="#i-steps"/></svg>
+          <h3>Steps</h3>
+          <p class="big muted">—</p>
+          <p class="muted small" id="stepNote">Step counting needs the phone app</p>
+        </div>
+      </div>
+
+      <div class="card empty-card">
+        <svg class="ic" aria-hidden="true"><use href="#i-watch"/></svg>
+        <div>
+          <h3>Readiness</h3>
+          <p class="muted small">Readiness is scored from overnight watch data (heart rate, HRV, sleep). Watch pairing isn’t available in the web app yet, so there is no score to show.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2>Meals today</h2>
+          <button class="chip" type="button" data-action="add-meal"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg>Log meal</button>
+        </div>
+        <ul class="list" id="todayMeals"></ul>
+      </div>
+    </section>
+
+    <!-- DIARY -->
+    <section class="view" id="view-diary" data-view="diary" aria-labelledby="h-diary" hidden>
+      <p class="eyebrow">Diary</p>
+      <h1 class="title" id="h-diary">What you logged</h1>
+      <div class="days" id="dayStrip" role="tablist" aria-label="Choose a day"></div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2>Meals</h2>
+          <button class="chip" type="button" data-action="add-meal"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg>Log meal</button>
+        </div>
+        <ul class="list" id="diaryMeals"></ul>
+        <p class="total" id="diaryTotal"></p>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2>Water</h2>
+          <span class="muted small" id="waterGoalNote"></span>
+        </div>
+        <p class="big" id="waterStat">0 ml</p>
+        <div class="bar" aria-hidden="true"><span id="waterBar"></span></div>
+        <div class="row-btns">
+          <button class="chip" type="button" data-water="250"><svg class="ic" aria-hidden="true"><use href="#i-drop"/></svg>+250 ml</button>
+          <button class="chip" type="button" data-water="500"><svg class="ic" aria-hidden="true"><use href="#i-drop"/></svg>+500 ml</button>
+          <button class="chip ghost" type="button" data-water="-250">Undo 250</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h2>Sleep</h2></div>
+        <form class="inline-form" id="sleepForm">
+          <label for="sleepInput">Hours slept the night before</label>
+          <div class="field-row">
+            <input id="sleepInput" name="sleep" type="number" inputmode="decimal" min="0" max="16" step="0.25" placeholder="e.g. 7.5">
+            <button class="btn" type="submit">Save</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- VOICE -->
+    <section class="view view-voice" id="view-voice" data-view="voice" aria-labelledby="h-voice" hidden>
+      <h1 class="sr-only" id="h-voice">Talk to Elvora</h1>
+      <div class="stage">
+        <button class="orb-stage orb-slot" data-orb="main" id="orbButton" type="button" aria-label="Start talking to Elvora"></button>
+        <div class="stage-text">
+          <p class="state-label" id="voiceState" aria-live="polite">Tap the orb to talk</p>
+          <p class="transcript" id="transcript"></p>
+          <div class="reply" id="voiceReply"></div>
+          <p class="notice" id="voiceNotice" role="status" hidden></p>
+        </div>
+      </div>
+      <div class="voice-controls">
+        <form class="ask-form" id="voiceForm" autocomplete="off">
+          <label class="sr-only" for="voiceText">Type to Elvora</label>
+          <input id="voiceText" type="text" enterkeyhint="send" placeholder="Or type a question…" maxlength="300">
+          <button class="icon-btn" type="submit" aria-label="Send"><svg class="ic" aria-hidden="true"><use href="#i-send"/></svg></button>
+        </form>
+        <p class="fine">Mic turns on only while you talk. <button class="link inline" type="button" data-goto="you" data-anchor="privacy">How voice data is handled</button></p>
+      </div>
+    </section>
+
+    <!-- COACH -->
+    <section class="view view-coach" id="view-coach" data-view="coach" aria-labelledby="h-coach" hidden>
+      <p class="eyebrow">Coach</p>
+      <h1 class="title" id="h-coach">Chat with Elvora</h1>
+      <div class="chat" id="chat" aria-live="polite"></div>
+      <div class="suggest" id="suggest"></div>
+      <form class="ask-form chat-form" id="chatForm" autocomplete="off">
+        <label class="sr-only" for="chatText">Message Elvora</label>
+        <input id="chatText" type="text" enterkeyhint="send" placeholder="Ask about food, training, sleep…" maxlength="300">
+        <button class="icon-btn" type="submit" aria-label="Send"><svg class="ic" aria-hidden="true"><use href="#i-send"/></svg></button>
+      </form>
+    </section>
+
+    <!-- YOU -->
+    <section class="view" id="view-you" data-view="you" aria-labelledby="h-you" hidden>
+      <p class="eyebrow">You</p>
+      <h1 class="title" id="h-you">Profile &amp; targets</h1>
+
+      <form class="card form" id="profileForm">
+        <h2>Your details</h2>
+        <div class="fields">
+          <label>Name <input name="name" type="text" maxlength="40" autocomplete="given-name" placeholder="Optional"></label>
+          <label>Sex
+            <select name="sex"><option value="">Choose</option><option value="female">Female</option><option value="male">Male</option></select>
+          </label>
+          <label>Age <input name="age" type="number" inputmode="numeric" min="14" max="100" placeholder="years"></label>
+          <label>Height <input name="heightCm" type="number" inputmode="decimal" min="120" max="230" placeholder="cm"></label>
+          <label>Weight <input name="weightKg" type="number" inputmode="decimal" min="35" max="250" step="0.1" placeholder="kg"></label>
+          <label>Activity
+            <select name="activity">
+              <option value="sedentary">Sedentary — desk job, little exercise</option>
+              <option value="light">Light — exercise 1–3 days a week</option>
+              <option value="moderate" selected>Moderate — exercise 3–5 days a week</option>
+              <option value="active">Active — hard exercise 6–7 days</option>
+              <option value="athlete">Athlete — twice-daily or physical job</option>
+            </select>
+          </label>
+          <label>Goal
+            <select name="goal">
+              <option value="maintain">Maintain weight</option>
+              <option value="muscle">Build muscle</option>
+              <option value="cut">Lose fat</option>
+              <option value="endurance">Build endurance</option>
+            </select>
+          </label>
+        </div>
+        <button class="btn wide" type="submit">Save targets</button>
+        <p class="saved muted small" id="savedNote" role="status"></p>
+      </form>
+
+      <div class="card" id="targetsCard">
+        <h2>Your daily targets</h2>
+        <dl class="targets" id="targets"></dl>
+        <p class="muted small">Calories use the Mifflin–St Jeor equation × your activity level. Macros follow your goal. Water is 35 ml per kg of body weight.</p>
+      </div>
+
+      <div class="card">
+        <h2>Settings</h2>
+        <label class="toggle"><span>Speak Elvora’s replies</span><input type="checkbox" id="setSpeak" checked><span class="switch" aria-hidden="true"></span></label>
+        <label class="toggle"><span>Reduce motion</span><input type="checkbox" id="setMotion"><span class="switch" aria-hidden="true"></span></label>
+      </div>
+
+      <div class="card" id="privacy">
+        <h2><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg> Privacy &amp; voice data</h2>
+        <ul class="bullets">
+          <li>Everything you log stays in this browser’s storage on this device. Elvora’s web app has no account and sends your logs nowhere.</li>
+          <li>The microphone turns on only after you tap the orb, and turns off when you stop or Elvora answers.</li>
+          <li>Speech-to-text is done by your browser. Chrome sends the audio to Google’s speech service and Safari may use Apple’s. Elvora never records or stores audio.</li>
+          <li>Replies come from Elvora’s on-device coach, using your logged numbers.</li>
+          <li>Elvora is a wellness coach, not a medical service. For pain, illness or medical questions, see a clinician.</li>
+        </ul>
+        <p class="small"><a href="privacy.html">Full privacy note</a></p>
+        <div class="row-btns">
+          <button class="chip" type="button" id="exportBtn"><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg>Export my data</button>
+          <button class="chip danger" type="button" id="wipeBtn"><svg class="ic" aria-hidden="true"><use href="#i-trash"/></svg>Delete all data</button>
+        </div>
+      </div>
+
+      <p class="foot muted small">Elvora web app · v1.0 preview · <a href="https://github.com/Arnold-RG/elvora" rel="noopener">Source on GitHub</a></p>
+    </section>
+  </main>
+
+  <nav class="tabbar" id="tabbar" aria-label="Main">
+    <div class="tabbar-glass">
+      <span class="tab-indicator" id="tabIndicator" aria-hidden="true"></span>
+      <a class="tab" href="#today" data-tab="today"><svg class="ic" aria-hidden="true"><use href="#i-today"/></svg><span>Today</span></a>
+      <a class="tab" href="#diary" data-tab="diary"><svg class="ic" aria-hidden="true"><use href="#i-diary"/></svg><span>Diary</span></a>
+      <a class="tab tab-fab" href="#voice" data-tab="voice" aria-label="Elvora voice">
+        <span class="fab-ring" aria-hidden="true"><span class="fab-orb orb-slot" data-orb="fab"></span></span>
+        <span class="fab-label">Elvora</span>
+      </a>
+      <a class="tab" href="#coach" data-tab="coach"><svg class="ic" aria-hidden="true"><use href="#i-coach"/></svg><span>Coach</span></a>
+      <a class="tab" href="#you" data-tab="you"><svg class="ic" aria-hidden="true"><use href="#i-you"/></svg><span>You</span></a>
+    </div>
+  </nav>
+</div>
+
+<dialog class="sheet" id="mealSheet" aria-labelledby="mealTitle">
+  <form method="dialog" class="sheet-body" id="mealForm">
+    <div class="sheet-grip" aria-hidden="true"></div>
+    <div class="card-head">
+      <h2 id="mealTitle">Log a meal</h2>
+      <button class="icon-btn ghost" type="button" value="cancel" id="mealClose" aria-label="Close"><svg class="ic" aria-hidden="true"><use href="#i-close"/></svg></button>
+    </div>
+    <label>What did you eat? <input name="name" type="text" required maxlength="60" placeholder="e.g. Rice, beans and chicken"></label>
+    <div class="field-row two">
+      <label>Calories <input name="kcal" type="number" inputmode="numeric" min="0" max="5000" required placeholder="kcal"></label>
+      <label>Protein <input name="protein" type="number" inputmode="decimal" min="0" max="400" step="0.5" placeholder="g"></label>
+    </div>
+    <p class="muted small">Enter the numbers from the label or your own estimate. Elvora doesn’t guess them for you.</p>
+    <button class="btn wide" type="submit" value="save">Save meal</button>
+  </form>
+</dialog>
+
+<noscript><p class="noscript">Elvora needs JavaScript to run.</p></noscript>
+</body>
+</html>
