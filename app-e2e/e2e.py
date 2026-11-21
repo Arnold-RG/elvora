@@ -378,13 +378,25 @@ async def t_wipe(pg):
     assert await pg.evaluate("localStorage.getItem('elvora.v1')") is None, 'key re-created on reload'
     await goto(pg, 'today'); await expect(pg.locator('.ring.water .ring-num')).to_have_text('0.0')
 
+async def t_skip_link(pg):
+    await pg.keyboard.press('Tab'); await pg.wait_for_timeout(400)
+    assert await pg.evaluate("document.activeElement.id") == 'skipLink'
+    box = await pg.locator('#skipLink').bounding_box()
+    assert box['y'] >= 0 and box['height'] >= 44, box
+    await pg.keyboard.press('Enter')
+    assert await pg.evaluate("document.activeElement.id") == 'main'
+    for v, sel in [('voice', '.fine .link.inline'), ('you', 'a[href="privacy.html"]'), ('you', '.foot a')]:
+        await goto(pg, v)
+        b = await pg.locator(sel).bounding_box()
+        if b: assert b['height'] >= 24 and b['width'] >= 24, (sel, b)
+
 TESTS = [('Navigation & 5-tab bar', t_nav), ('Profile & targets', t_profile), ('Food search (USDA) + portion + recent', t_food_search),
          ('Manual food, edit, delete', t_food_manual_edit_delete), ('Water log', t_water), ('Workout logger & templates', t_workout),
          ('Steps & activity log', t_activity), ('Recovery check-in & readiness', t_recovery), ('Weekly progress charts & weight', t_progress),
          ('Reminders (Notification API)', t_reminders), ('Streaks + export/import/wipe', t_streak_import_export),
          ('Coach (built-in) uses logged data', t_coach_builtin), ('Coach fallback when API down / 429', t_coach_fallback),
          ('Voice orb states', t_voice),
-         ('Mic released when app hidden / page hidden (pagehide)', t_mic_released_on_hide), ('Delete all data (key + caches)', t_wipe)]
+         ('Mic released when app hidden / page hidden (pagehide)', t_mic_released_on_hide), ('Delete all data (key + caches)', t_wipe), ('Skip link and tap targets', t_skip_link)]
 if '--ai' in sys.argv: TESTS.append(('Coach (Gemini) uses logged data', t_coach_ai))
 
 async def main():
