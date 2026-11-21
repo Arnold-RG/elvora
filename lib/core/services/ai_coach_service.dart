@@ -132,11 +132,9 @@ class AiCoachService {
         mood: CoachKnowledge.moodFor(userMessage, text),
         fromModel: true,
       );
-    } on DioException catch (e) {
-      final detail = e.response?.data is Map
-          ? (e.response!.data as Map)['error']?.toString() ?? e.message
-          : e.message;
-      debugPrint('AiCoachService request failed: $detail');
+    } on DioException catch (_) {
+      // Provider errors may include user input or account details; do not log them.
+      debugPrint('AiCoachService: model request unavailable');
       final fallback = _offlineReply(userMessage, context);
       return CoachReply(
         text: fallback.text,
@@ -144,8 +142,9 @@ class AiCoachService {
         fromModel: false,
         error: 'Live coach unavailable — answered from on-device knowledge.',
       );
-    } catch (e) {
-      debugPrint('AiCoachService unexpected error: $e');
+    } catch (_) {
+      // Avoid exposing conversation context or provider diagnostics in logs.
+      debugPrint('AiCoachService: unexpected model failure');
       final fallback = _offlineReply(userMessage, context);
       return CoachReply(
         text: fallback.text,
