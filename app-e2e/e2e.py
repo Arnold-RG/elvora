@@ -315,12 +315,71 @@ async def t_voice(pg):
     assert seen[-4:] == ['listening', 'thinking', 'speaking', 'idle'], seen
     await expect(pg.locator('#voiceReply')).not_to_be_empty()
 
+MIC_SPY = """(() => {
+  window.__tracks = [];
+  const md = navigator.mediaDevices; const orig = md.getUserMedia.bind(md);
+  md.getUserMedia = async (c) => { const s = await orig(c); window.__tracks.push(...s.getTracks()); return s; };
+  // a recogniser that keeps listening until stopped, so the page can be hidden mid-listen
+  class OpenSR { start() { setTimeout(() => this.onspeechstart && this.onspeechstart(), 300); } stop() { this.onend && this.onend(); } abort() { this.stop(); } }
+  window.SpeechRecognition = window.webkitSpeechRecognition = OpenSR;
+})();"""
+HIDE = """(hidden) => {
+  Object.defineProperty(document, 'hidden', { configurable: true, get: () => hidden });
+  Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => (hidden ? 'hidden' : 'visible') });
+  document.dispatchEvent(new Event('visibilitychange'));
+}"""
+async def mic_tracks(pg): return await pg.evaluate("window.__tracks.map(t => t.readyState)")
+async def start_listening(pg):
+    before = len(await mic_tracks(pg))
+    await pg.click('#orbButton')
+    for _ in range(50):
+        if len(await mic_tracks(pg)) > before and await pg.evaluate("document.querySelector('#view-voice').dataset.state") == 'listening': return
+        await pg.wait_for_timeout(100)
+    raise AssertionError('never started listening')
+
+async def t_mic_released_on_hide(pg):
+    await pg.click('.tab[data-tab=voice]')
+    await start_listening(pg)
+    assert (await mic_tracks(pg))[-1] == 'live', ('not live while listening', await mic_tracks(pg))
+    await expect(pg.locator('#orbButton')).to_have_attribute('aria-pressed', 'true')
+    await pg.evaluate(HIDE, True)                       # app switched away / screen locked
+    await pg.wait_for_timeout(200)
+    st = await mic_tracks(pg)
+    assert st and all(x == 'ended' for x in st), ('after visibilitychange', st)
+    await expect(pg.locator('#view-voice')).to_have_attribute('data-state', 'idle')
+    await pg.evaluate(HIDE, False)
+    await start_listening(pg)
+    assert (await mic_tracks(pg))[-1] == 'live', ('not live while listening', await mic_tracks(pg))
+    await pg.evaluate("window.dispatchEvent(new PageTransitionEvent('pagehide', { persisted: true }))")   # page unloaded / bfcache
+    await pg.wait_for_timeout(200)
+    st = await mic_tracks(pg)
+    assert all(x == 'ended' for x in st), ('after pagehide', st)
+t_mic_released_on_hide.init = MIC_SPY
+
+async def t_wipe(pg):
+    await set_profile(pg)
+    await goto(pg, 'diary'); await pg.click('[data-water="250"]')
+    await pg.evaluate("caches.open('elvora-v-test').then(c => c.put('./probe', new Response('x')))")
+    await pg.evaluate("localStorage.setItem('elvora.reminders.fired', '{}')")
+    assert await pg.evaluate("localStorage.getItem('elvora.v1')") is not None
+    await goto(pg, 'you')
+    pg.once('dialog', lambda d: asyncio.ensure_future(d.accept()))
+    await pg.click('#wipeBtn')
+    await expect(pg.locator('#toast')).to_have_text('All data deleted')
+    await pg.wait_for_timeout(500)
+    left = await pg.evaluate("Promise.all([caches.keys(), Object.keys(localStorage).filter(k => k.startsWith('elvora'))])")
+    assert left == [[], []], left
+    await reload(pg)
+    assert await pg.evaluate("localStorage.getItem('elvora.v1')") is None, 'key re-created on reload'
+    await goto(pg, 'today'); await expect(pg.locator('.ring.water .ring-num')).to_have_text('0.0')
+
 TESTS = [('Navigation & 5-tab bar', t_nav), ('Profile & targets', t_profile), ('Food search (USDA) + portion + recent', t_food_search),
          ('Manual food, edit, delete', t_food_manual_edit_delete), ('Water log', t_water), ('Workout logger & templates', t_workout),
          ('Steps & activity log', t_activity), ('Recovery check-in & readiness', t_recovery), ('Weekly progress charts & weight', t_progress),
          ('Reminders (Notification API)', t_reminders), ('Streaks + export/import/wipe', t_streak_import_export),
          ('Coach (built-in) uses logged data', t_coach_builtin), ('Coach fallback when API down / 429', t_coach_fallback),
-         ('Voice orb states', t_voice)]
+         ('Voice orb states', t_voice),
+         ('Mic released when app hidden / page hidden (pagehide)', t_mic_released_on_hide), ('Delete all data (key + caches)', t_wipe)]
 if '--ai' in sys.argv: TESTS.append(('Coach (Gemini) uses logged data', t_coach_ai))
 
 async def main():
@@ -334,6 +393,7 @@ async def main():
                 ctx = await b.new_context(viewport={'width': w, 'height': hgt}, device_scale_factor=2, is_mobile=True, has_touch=True,
                                           permissions=['microphone', 'notifications'], accept_downloads=True)
                 await ctx.add_init_script(SR_STUB)
+                if getattr(fn, 'init', None): await ctx.add_init_script(fn.init)
                 pg = await ctx.new_page()
                 errs = []
                 pg.on('pageerror', lambda e: errs.append(str(e)))
