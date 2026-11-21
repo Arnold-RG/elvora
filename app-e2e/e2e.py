@@ -320,7 +320,7 @@ MIC_SPY = """(() => {
   const md = navigator.mediaDevices; const orig = md.getUserMedia.bind(md);
   md.getUserMedia = async (c) => { const s = await orig(c); window.__tracks.push(...s.getTracks()); return s; };
   // a recogniser that keeps listening until stopped, so the page can be hidden mid-listen
-  class OpenSR { start() { setTimeout(() => this.onspeechstart && this.onspeechstart(), 300); } stop() { this.onend && this.onend(); } abort() { this.stop(); } }
+  class OpenSR { start() { setTimeout(() => { this.onspeechstart && this.onspeechstart(); this.onresult && this.onresult({ resultIndex: 0, results: [Object.assign([{ transcript: 'how much water' }], { isFinal: false })] }); }, 300); } stop() { this.onend && this.onend(); } abort() { this.stop(); } }
   window.SpeechRecognition = window.webkitSpeechRecognition = OpenSR;
 })();"""
 HIDE = """(hidden) => {
@@ -342,11 +342,16 @@ async def t_mic_released_on_hide(pg):
     await start_listening(pg)
     assert (await mic_tracks(pg))[-1] == 'live', ('not live while listening', await mic_tracks(pg))
     await expect(pg.locator('#orbButton')).to_have_attribute('aria-pressed', 'true')
+    await expect(pg.locator('#transcript')).to_contain_text('how much water')   # half a question heard
+    await pg.evaluate("window.__states = []; new MutationObserver(() => window.__states.push(document.querySelector('#view-voice').dataset.state)).observe(document.querySelector('#view-voice'), { attributes: true, attributeFilter: ['data-state'] })")
     await pg.evaluate(HIDE, True)                       # app switched away / screen locked
     await pg.wait_for_timeout(200)
     st = await mic_tracks(pg)
     assert st and all(x == 'ended' for x in st), ('after visibilitychange', st)
     await expect(pg.locator('#view-voice')).to_have_attribute('data-state', 'idle')
+    await pg.wait_for_timeout(800)   # a half-heard question must not start an answer after the page was hidden
+    states = await pg.evaluate("window.__states")
+    assert states[-1:] == ['idle'] and 'thinking' not in states[1:] and 'speaking' not in states, ('state after hide', states)
     await pg.evaluate(HIDE, False)
     await start_listening(pg)
     assert (await mic_tracks(pg))[-1] == 'live', ('not live while listening', await mic_tracks(pg))
