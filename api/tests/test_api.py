@@ -11,7 +11,7 @@ INSTALL = "test-install-0123456789"
 
 
 def load(dev=False, **env):
-    os.environ.update({"GEMINI_API_KEY": "test-key", "ELVORA_SESSION_SECRET": "unit-test-secret", **env})
+    os.environ.update({"GEMINI_API_KEY": "test-key", "ELVORA_SESSION_SECRET": "unit-test-secret-0123456789abcdef-0123", **env})
     os.environ.pop("ALLOWED_ORIGINS", None)
     if dev:
         os.environ["ELVORA_DEV"] = "1"
@@ -78,7 +78,7 @@ def test_forged_tampered_and_expired_tokens_rejected(api):
 
 def test_token_signed_with_other_secret_rejected(api):
     tok = token(api)
-    m2 = load(ELVORA_SESSION_SECRET="a-different-secret")
+    m2 = load(ELVORA_SESSION_SECRET="a-different-secret-0123456789abcdef-0123")
     with TestClient(m2.app) as c2:
         assert coach(c2, tok).status_code == 401
 
@@ -137,7 +137,7 @@ def test_chunked_body_over_limit_is_413_before_gemini(api):
 
 def test_security_headers(api):
     r = api.get("/health")
-    assert r.json() == {"ok": True, "ai": True}
+    assert r.json() == {"ok": True, "ai": True, "session": True}
     assert r.headers["strict-transport-security"].startswith("max-age=31536000")
     assert r.headers["x-content-type-options"] == "nosniff"
     assert r.headers["x-frame-options"] == "DENY"
@@ -153,3 +153,33 @@ def test_cors_preflight_allows_session_header_for_app_only(api):
 def test_secret_never_returned(api):
     r = coach(api, token(api))
     assert "unit-test-secret" not in r.text and "test-key" not in r.text
+
+
+# Round 3: secret strength and User-Agent binding
+def test_short_secret_fails_closed():
+    m = load(ELVORA_SESSION_SECRET="too-short-secret")
+    called = []
+
+    async def spy(model, turn):
+        called.append(1)
+        return "ok", "x"
+    m._call_gemini = spy
+    with TestClient(m.app) as c:
+        assert c.get("/health").json() == {"ok": True, "ai": True, "session": False}
+        r = c.post("/api/session", json={"installId": INSTALL}, headers={"Origin": APP})
+        assert r.json() == {"ok": False, "fallback": True, "reason": "not_configured"}
+        forged, _ = m.make_token(INSTALL)  # even a token signed with the empty key is refused
+        r = c.post("/api/coach", json={"message": "hi"}, headers={"Origin": APP, "x-elvora-session": forged})
+        assert r.json()["reason"] == "not_configured" and not called
+
+
+def test_long_secret_enables_sessions(api):
+    assert api.get("/health").json()["session"] is True
+
+
+def test_token_bound_to_user_agent(api):
+    r = api.post("/api/session", json={"installId": INSTALL}, headers={"Origin": APP, "CF-Connecting-IP": "81.2.69.40", "User-Agent": "Phone A"})
+    tok = r.json()["token"]
+    same = api.post("/api/coach", json={"message": "hi"}, headers={"Origin": APP, "CF-Connecting-IP": "81.2.69.40", "User-Agent": "Phone A", "x-elvora-session": tok})
+    other = api.post("/api/coach", json={"message": "hi"}, headers={"Origin": APP, "CF-Connecting-IP": "81.2.69.40", "User-Agent": "curl/8.0", "x-elvora-session": tok})
+    assert same.status_code == 200 and other.status_code == 401

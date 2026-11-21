@@ -39,3 +39,10 @@ those stubs, so the coach runs as its own small service.
 - Bodies are capped at 4 KB while streaming (chunked uploads included) before any Gemini call.
 
 Tests: `pip install -r api/requirements.txt pytest && python -m pytest api/tests -q` (Gemini is stubbed).
+
+## Round 3
+
+- `ELVORA_SESSION_SECRET` must be at least 32 bytes. If it is missing or shorter, `/api/session` and `/api/coach`
+  fail closed (`reason: not_configured`, Gemini never called) and `/health` reports `"session": false`.
+- Session tokens carry a keyed hash of the User-Agent and are refused from a different User-Agent. They are not bound
+  to the IP, because mobile IPs change during a session.

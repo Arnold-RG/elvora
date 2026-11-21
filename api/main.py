@@ -66,7 +66,10 @@ GLOBAL_PER_MIN = int(os.environ.get("RATE_GLOBAL_PER_MIN", "10"))
 GLOBAL_PER_DAY = int(os.environ.get("RATE_GLOBAL_PER_DAY", "300"))
 SESSION_PER_IP_PER_MIN = int(os.environ.get("RATE_SESSION_PER_IP_PER_MIN", "6"))
 SESSION_TTL_S = int(os.environ.get("SESSION_TTL_S", "1800"))
-SESSION_SECRET = (os.environ.get("ELVORA_SESSION_SECRET") or "").strip().encode()
+SESSION_SECRET_RAW = (os.environ.get("ELVORA_SESSION_SECRET") or "").strip().encode()
+MIN_SECRET_BYTES = 32
+# Fail closed: a missing or short secret disables /api/session and /api/coach (health still answers).
+SESSION_SECRET = SESSION_SECRET_RAW if len(SESSION_SECRET_RAW) >= MIN_SECRET_BYTES else b""
 UPSTREAM_TIMEOUT = float(os.environ.get("UPSTREAM_TIMEOUT_S", "12"))
 MAX_BODY = 4096
 PACIFIC = ZoneInfo("America/Los_Angeles")  # Gemini daily quota resets at Pacific midnight
@@ -79,7 +82,9 @@ _client: Optional[httpx.AsyncClient] = None
 async def lifespan(_app):
     global _client
     _client = httpx.AsyncClient(timeout=httpx.Timeout(UPSTREAM_TIMEOUT, connect=5.0))
-    log.info("coach api up; key configured=%s session secret configured=%s models=%s origins=%d dev=%s",
+    if SESSION_SECRET_RAW and not SESSION_SECRET:
+        log.error("ELVORA_SESSION_SECRET is shorter than %d bytes; session and coach endpoints are disabled", MIN_SECRET_BYTES)
+    log.info("coach api up; key configured=%s session secret ok=%s models=%s origins=%d dev=%s",
              bool(API_KEY), bool(SESSION_SECRET), MODELS, len(ALLOWED_ORIGINS), DEV)
     yield
     await _client.aclose()
@@ -171,14 +176,20 @@ def _unb64(s: str) -> bytes:
     return base64.urlsafe_b64decode(s + "=" * (-len(s) % 4))
 
 
-def make_token(install_id: str, now: Optional[float] = None) -> tuple[str, int]:
+def ua_hash(user_agent: str) -> str:
+    """Short keyed hash of the User-Agent. Tokens are bound to it (not to the IP, which changes on mobile)."""
+    return _b64(hmac.new(SESSION_SECRET, b"ua:" + (user_agent or "")[:512].encode(), hashlib.sha256).digest()[:12])
+
+
+def make_token(install_id: str, now: Optional[float] = None, user_agent: str = "") -> tuple[str, int]:
     exp = int((time.time() if now is None else now) + SESSION_TTL_S)
-    payload = _b64(json.dumps({"i": install_id, "e": exp, "n": secrets.token_urlsafe(6)}, separators=(",", ":")).encode())
+    payload = _b64(json.dumps({"i": install_id, "e": exp, "u": ua_hash(user_agent), "n": secrets.token_urlsafe(6)},
+                              separators=(",", ":")).encode())
     sig = _b64(hmac.new(SESSION_SECRET, payload.encode(), hashlib.sha256).digest())
     return f"{payload}.{sig}", exp
 
 
-def check_token(token: str, now: Optional[float] = None) -> Optional[str]:
+def check_token(token: str, now: Optional[float] = None, user_agent: str = "") -> Optional[str]:
     """Returns the session's install id if the token is genuine and unexpired."""
     if not SESSION_SECRET or not token or len(token) > 300 or token.count(".") != 1:
         return None
@@ -191,6 +202,8 @@ def check_token(token: str, now: Optional[float] = None) -> Optional[str]:
     except (ValueError, json.JSONDecodeError):
         return None
     if not isinstance(data, dict) or int(data.get("e", 0)) < (time.time() if now is None else now):
+        return None
+    if not hmac.compare_digest(str(data.get("u", "")), ua_hash(user_agent)):
         return None
     return str(data.get("i", ""))[:64] or None
 
@@ -351,7 +364,7 @@ async def _call_gemini(model: str, user_turn: str) -> tuple[str, Optional[str]]:
 
 @app.get("/health")
 async def health():
-    return {"ok": True, "ai": bool(API_KEY)}
+    return {"ok": True, "ai": bool(API_KEY), "session": bool(SESSION_SECRET)}
 
 
 @app.post("/api/session")
@@ -367,13 +380,15 @@ async def session(request: Request):
         return fallback("not_configured")
     if not await _take_session_slot(_client_ip(request)):
         return fallback("rate_limited", status=429)
-    token, exp = make_token(body.installId)
+    token, exp = make_token(body.installId, user_agent=request.headers.get("user-agent", ""))
     return {"ok": True, "token": token, "expiresAt": exp}
 
 
 @app.post("/api/coach")
 async def coach(request: Request):
-    session_id = check_token(request.headers.get(SESSION_HEADER, ""))
+    if not SESSION_SECRET:
+        return fallback("not_configured")
+    session_id = check_token(request.headers.get(SESSION_HEADER, ""), user_agent=request.headers.get("user-agent", ""))
     if not session_id:
         return _json({"ok": False, "fallback": True, "reason": "session"}, 401)
     try:
