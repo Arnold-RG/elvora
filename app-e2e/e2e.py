@@ -390,7 +390,7 @@ async def t_skip_link(pg):
     for v, sel in [('voice', '.fine .link.inline'), ('you', 'a[href="privacy.html"]'), ('you', '.foot a'), ('food', '.cite a')]:
         await goto(pg, v)
         b = await pg.locator(sel).bounding_box()
-        if sel == '.cite a': assert b, ('missing', sel)  # voice hint is hidden on short screens by design
+        if sel == '.cite a': assert b, ('missing', sel)  # must exist on every screen size (the voice hint is hidden on short screens by design, so it is not required)
         if b: assert b['height'] >= 24 and b['width'] >= 24, (sel, b)
 
 TESTS = [('Navigation & 5-tab bar', t_nav), ('Profile & targets', t_profile), ('Food search (USDA) + portion + recent', t_food_search),

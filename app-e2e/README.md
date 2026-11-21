@@ -12,5 +12,10 @@ python app-e2e/e2e.py http://localhost:8080/
 python app-e2e/e2e.py https://elvora-app-preview.onrender.com/ --ai   # adds a real Gemini round trip
 ```
 
+`sw_caches.py` checks the service workers are safe on a shared origin such as `arnold-rg.github.io`: `sw.js`
+deletes only older `elvora-*` caches, and `flutter_service_worker.js` (which retires the old Flutter build) deletes only
+Flutter caches, reloads this app's open tab once and leaves other projects' caches and tabs alone
+(`python app-e2e/sw_caches.py`).
+
 `sr_stub.js` replaces the browser's speech recogniser with a fixed phrase so the voice flow can run headless.
 Results go to `app-e2e/out/results.json` (ignored by git); set `CHROME_PATH` to use a specific Chromium build.
