@@ -1,7 +1,7 @@
 # Render Blueprint for the Elvora web app preview (branch rebuild/elvora-app).
 # Mirrors the two services that already exist (elvora-app-preview, elvora-api-preview) and adds the HTTP
 # security headers for the static app. To apply it, link this file as a Blueprint in Render and choose
-# "adopt existing resources"; GEMINI_API_KEY is sync:false, so it is never stored here and keeps its current value.
+# "adopt existing resources". Every env var is sync:false, so values are never stored here and keep their current values.
 services:
   - type: web
     runtime: static
@@ -10,7 +10,9 @@ services:
     branch: rebuild/elvora-app
     buildCommand: echo 'static app, no build step'
     staticPublishPath: app
-    pullRequestPreviewsEnabled: false
+    autoDeployTrigger: commit
+    previews:
+      generation: "off"
     headers:
       - path: /*
         name: Content-Security-Policy
@@ -41,13 +43,16 @@ services:
     branch: rebuild/elvora-app
     plan: free
     region: frankfurt
+    autoDeployTrigger: commit
+    previews:
+      generation: "off"
     buildCommand: pip install -r api/requirements.txt
     startCommand: uvicorn api.main:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips='*' --no-server-header
-    healthCheckPath: /health
     envVars:
       - key: GEMINI_API_KEY
         sync: false
+      # sync: false = keep the value already set on the service; the Blueprint never overwrites or stores it
       - key: PYTHON_VERSION
-        value: 3.12.7
+        sync: false
       - key: ALLOWED_ORIGINS
-        value: https://elvora-app-preview.onrender.com,http://localhost:8080,http://127.0.0.1:8080
+        sync: false
