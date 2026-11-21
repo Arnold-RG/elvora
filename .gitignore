@@ -93,3 +93,4 @@ Desktop.ini
 secrets/
 .secrets/
 api/.venv/
+app-e2e/out/
