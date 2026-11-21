@@ -114,16 +114,45 @@ export function coachContext() {
   };
 }
 
+/* A random id for this install (kept on this device only) and a short-lived signed session token
+   from the API. The token is held in memory; a new one is fetched when it expires or is refused. */
+const INSTALL_KEY = 'elvora.install';
+let session = null; // { token, expiresAt }
+function installId() {
+  let id = null;
+  try { id = localStorage.getItem(INSTALL_KEY); } catch {}
+  if (!id || !/^[A-Za-z0-9_-]{16,64}$/.test(id)) {
+    const b = new Uint8Array(18); crypto.getRandomValues(b);
+    id = btoa(String.fromCharCode(...b)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    try { localStorage.setItem(INSTALL_KEY, id); } catch {}
+  }
+  return id;
+}
+export function forgetSession() { session = null; try { localStorage.removeItem(INSTALL_KEY); } catch {} }
+async function getSession(signal, fresh = false) {
+  if (!fresh && session && session.expiresAt * 1000 - Date.now() > 60_000) return session.token;
+  const res = await fetch(`${API_BASE}/api/session`, {
+    method: 'POST', headers: { 'content-type': 'application/json' }, signal, credentials: 'omit',
+    body: JSON.stringify({ installId: installId() }),
+  });
+  const j = await res.json().catch(() => null);
+  if (!res.ok || !j?.ok || !j.token) throw new Error('no session');
+  session = { token: j.token, expiresAt: j.expiresAt };
+  return session.token;
+}
+
 /** Ask the AI coach; falls back to the built-in coach on any problem. */
 export async function askCoach(message) {
   if (get().settings.aiCoach !== false && API_BASE) {
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), API_TIMEOUT_MS);
+    const body = JSON.stringify({ message: message.slice(0, 500), context: coachContext() });
+    const post = (token) => fetch(`${API_BASE}/api/coach`, {
+      method: 'POST', headers: { 'content-type': 'application/json', 'x-elvora-session': token }, signal: ctrl.signal, credentials: 'omit', body,
+    });
     try {
-      const res = await fetch(`${API_BASE}/api/coach`, {
-        method: 'POST', headers: { 'content-type': 'application/json' }, signal: ctrl.signal, credentials: 'omit',
-        body: JSON.stringify({ message: message.slice(0, 500), context: coachContext() }),
-      });
+      let res = await post(await getSession(ctrl.signal));
+      if (res.status === 401) res = await post(await getSession(ctrl.signal, true)); // token expired or secret rotated
       const j = await res.json().catch(() => null);
       if (res.ok && j?.ok && j.reply) return { text: j.reply, src: 'ai' };
     } catch { /* offline, timeout or blocked */ } finally { clearTimeout(timer); }

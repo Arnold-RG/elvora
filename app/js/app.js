@@ -1,6 +1,6 @@
 import { Orb, setReducedMotion } from './orb.js';
 import { Voice } from './voice.js';
-import { askCoach, warmCoach, SUGGESTIONS } from './coach.js';
+import { askCoach, warmCoach, forgetSession, SUGGESTIONS } from './coach.js';
 import * as S from './store.js';
 import { readiness } from './readiness.js';
 import { loadFoods, searchFoods, forGrams } from './foods.js';
@@ -104,7 +104,8 @@ async function orbTap() {
   $('#voiceReply').replaceChildren();
   $('#transcript').textContent = '';
   const text = await voice.listen();
-  if (text) respond(text);
+  // answer only if listening ended normally; hiding the page mid-listen resets to idle and must stay there
+  if (text && voice.state === 'thinking' && !document.hidden) respond(text);
 }
 
 /* ================= router ================= */
@@ -615,7 +616,7 @@ function bind() {
   });
   $('#wipeBtn').addEventListener('click', () => {
     if (confirm('Delete everything Elvora has stored on this device (your logs, settings and the offline copy of the app)? This can’t be undone.')) {
-      voice.stopAll(); S.wipe(); $('#profileForm').reset(); applyMotion(); renderView(); toast('All data deleted');
+      voice.stopAll(); forgetSession(); S.wipe(); $('#profileForm').reset(); applyMotion(); renderView(); toast('All data deleted');
       if (window.caches) caches.keys().then((ks) => Promise.all(ks.map((k) => caches.delete(k)))).catch(() => {});
     }
   });

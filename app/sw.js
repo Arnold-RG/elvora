@@ -1,5 +1,5 @@
 // Elvora service worker: offline app shell. Bump VERSION on every release.
-const VERSION = 'elvora-v1.1.2';
+const VERSION = 'elvora-v1.2.0';
 const SHELL = [
   './', './index.html', './manifest.webmanifest', './css/app.css',
   './js/app.js', './js/orb.js', './js/voice.js', './js/coach.js', './js/store.js', './js/config.js',

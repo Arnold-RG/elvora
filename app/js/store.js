@@ -120,7 +120,7 @@ export function importJSON(text) { applyImport(parseImport(text)); }
 /** Delete all stored data: the key is removed, not rewritten blank (it is written again only when something new is logged). */
 export function wipe() {
   data = blank();
-  try { localStorage.removeItem(KEY); localStorage.removeItem('elvora.reminders.fired'); } catch {}
+  try { localStorage.removeItem(KEY); localStorage.removeItem('elvora.reminders.fired'); localStorage.removeItem('elvora.install'); } catch {}
   notify();
 }
 
