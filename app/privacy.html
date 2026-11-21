@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'none'; style-src 'self'; img-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Privacy — Elvora web app</title>
+<meta name="description" content="How the Elvora web app handles your logs and voice data.">
+<meta name="theme-color" content="#05060b">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<main class="main doc">
+  <p class="eyebrow">Elvora web app</p>
+  <h1 class="title">Privacy &amp; voice data</h1>
+  <div class="card">
+    <h2>Your logs</h2>
+    <ul class="bullets">
+      <li>Meals, water, sleep, your profile and your chat with Elvora are saved in this browser’s local storage on your device.</li>
+      <li>The web app has no account, no analytics and no server-side database.</li>
+      <li>When the AI coach is on (You → Settings), your question and a small set of numbers — today’s calorie, protein and water totals, sleep hours, steps, active minutes, your targets, goal, activity level, readiness score and streak — are sent to Elvora’s coach server and on to Google Gemini to write the reply. No name, meal descriptions or chat history are sent. The server doesn’t store or log your messages; Google’s Gemini API terms apply to that step, and on the free tier Google may use these requests to improve its products.</li>
+      <li>Turn the AI coach off to keep everything on the device; the built-in coach then answers.</li>
+      <li>You can export everything as a JSON file or delete it all from the You tab.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>Microphone and voice</h2>
+    <ul class="bullets">
+      <li>The microphone turns on only after you tap the orb, and turns off when listening ends, or as soon as you switch away from Elvora, lock the screen or close the page.</li>
+      <li>The app measures the microphone level only to animate the orb. Audio is not recorded, played back or stored by Elvora.</li>
+      <li>Speech-to-text is provided by your browser. In Chrome the audio is sent to Google’s speech service; Safari may use Apple’s servers or on-device recognition. Their privacy policies apply to that step.</li>
+      <li>Spoken replies use your device’s built-in text-to-speech voices.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>Health disclaimer</h2>
+    <p class="muted">Elvora is a wellness and fitness coach. It is not a medical device and does not diagnose or treat any condition. For pain, illness or medical questions, talk to a clinician.</p>
+  </div>
+  <p class="foot"><a href="./#you">Back to Elvora</a></p>
+</main>
+</body>
+</html>

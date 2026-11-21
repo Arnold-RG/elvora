@@ -1,4 +1,4 @@
-# Deploy marketing site + Flutter web app to GitHub Pages
+# Deploy marketing site + Elvora web app (app/, static PWA, no build step) to GitHub Pages
 name: Deploy GitHub Pages
 
 on:
@@ -19,34 +19,19 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          cache: true
-
-      - name: Flutter pub get
-        run: flutter pub get
-
-      - name: Stub local secrets for public build
-        run: cp lib/config/local_secrets.example.dart lib/config/local_secrets.dart
-
-      - name: Build Flutter web
-        run: flutter build web --release --base-href /elvora/app/ --no-wasm-dry-run
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Assemble Pages site
         run: |
-          mkdir -p _site/app
+          mkdir -p _site
           cp -r website/* _site/
-          # Prefer freshly built web app
+          # Elvora web app (vanilla ES modules, served as-is) at /elvora/app/
           rm -rf _site/app
-          cp -r build/web _site/app
-          # SPA fallback for Flutter routes
-          cp _site/app/index.html _site/app/404.html
+          cp -r app _site/app
+          rm -f _site/app/README.md
           touch _site/.nojekyll
 
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         with:
           path: _site
 
@@ -58,4 +43,4 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
