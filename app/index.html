@@ -30,6 +30,7 @@
 <link rel="modulepreload" href="js/dom.js">
 </head>
 <body>
+<button class="skip-link" type="button" id="skipLink">Skip to main content</button>
 <svg class="sprite" aria-hidden="true" focusable="false">
   <symbol id="i-today" viewBox="0 0 24 24"><path d="M4 11.5 12 5l8 6.5V19a1 1 0 0 1-1 1h-4.5v-5h-5v5H5a1 1 0 0 1-1-1z"/></symbol>
   <symbol id="i-diary" viewBox="0 0 24 24"><path d="M6 4h10a2 2 0 0 1 2 2v14H8a2 2 0 0 1-2-2z"/><path d="M6 18a2 2 0 0 1 2-2h10"/><path d="M10 8h5M10 11h3"/></symbol>
@@ -188,7 +189,7 @@
           <input id="voiceText" type="text" enterkeyhint="send" placeholder="Or type a question…" maxlength="300">
           <button class="icon-btn" type="submit" aria-label="Send"><svg class="ic" aria-hidden="true"><use href="#i-send"/></svg></button>
         </form>
-        <p class="fine">Mic turns on only while you talk. <button class="link inline" type="button" data-goto="you" data-anchor="privacy">How voice data is handled</button></p>
+        <p class="fine">Mic turns on only while you talk. <button class="link inline tap" type="button" data-goto="you" data-anchor="privacy">How voice data is handled</button></p>
       </div>
     </section>
 
@@ -403,7 +404,7 @@
           <li>If the AI coach is off, busy or offline, replies come from Elvora’s built-in coach on this device.</li>
           <li>Elvora is a wellness coach, not a medical service. For pain, illness or medical questions, see a clinician.</li>
         </ul>
-        <p class="small"><a href="privacy.html">Full privacy note</a></p>
+        <p class="small"><a class="tap-link" href="privacy.html">Full privacy note</a></p>
         <div class="row-btns">
           <button class="chip" type="button" id="exportBtn"><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg>Export my data</button>
           <button class="chip" type="button" id="importBtn"><svg class="ic" aria-hidden="true"><use href="#i-upload"/></svg>Import</button>
@@ -412,7 +413,7 @@
         </div>
       </div>
 
-      <p class="foot muted small">Elvora web app · v1.1 preview · <a href="https://github.com/Arnold-RG/elvora" rel="noopener">Source on GitHub</a></p>
+      <p class="foot muted small">Elvora web app · v1.1 preview · <a class="tap-link" href="https://github.com/Arnold-RG/elvora" rel="noopener">Source on GitHub</a></p>
     </section>
   </main>
 

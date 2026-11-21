@@ -495,3 +495,13 @@ input[type="range"] { padding: 0; min-height: 44px; accent-color: var(--cyan); b
 #view-diary .title { margin-bottom: 12px; }
 #view-diary .card { padding: 16px 18px; }
 #view-diary .card-head { margin-bottom: 8px; }
+
+/* skip link: hidden until focused with the keyboard */
+.skip-link { position: fixed; z-index: 100; top: 8px; left: 8px; min-height: 44px; padding: 0 16px; border-radius: 12px;
+  border: 1px solid var(--cyan); background: #0b1222; color: var(--text); font-weight: 650; box-shadow: 0 8px 24px rgba(0,0,0,.5);
+  transform: translateY(-160%); transition: transform .15s var(--ease); }
+.skip-link:focus, .skip-link:focus-visible { transform: none; outline: 2px solid var(--cyan); outline-offset: 2px; }
+/* tap targets: inline text links at least 24px tall; standalone links 44px */
+.link.inline { display: inline-flex; align-items: center; min-height: 24px; padding: 0 2px; margin: 0 -2px; vertical-align: baseline; }
+.link.inline.tap, .tap-link { display: inline-flex; align-items: center; min-height: 44px; padding: 0 6px; margin: 0 -6px; }
+.fine .link.inline.tap { vertical-align: middle; }
