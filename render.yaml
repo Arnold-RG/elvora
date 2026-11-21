@@ -1,0 +1,53 @@
+# Render Blueprint for the Elvora web app preview (branch rebuild/elvora-app).
+# Mirrors the two services that already exist (elvora-app-preview, elvora-api-preview) and adds the HTTP
+# security headers for the static app. To apply it, link this file as a Blueprint in Render and choose
+# "adopt existing resources"; GEMINI_API_KEY is sync:false, so it is never stored here and keeps its current value.
+services:
+  - type: web
+    runtime: static
+    name: elvora-app-preview
+    repo: https://github.com/Arnold-RG/elvora
+    branch: rebuild/elvora-app
+    buildCommand: echo 'static app, no build step'
+    staticPublishPath: app
+    pullRequestPreviewsEnabled: false
+    headers:
+      - path: /*
+        name: Content-Security-Policy
+        value: "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; font-src 'self'; connect-src 'self' https://elvora-api-preview.onrender.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'"
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /*
+        name: Permissions-Policy
+        value: "camera=(), geolocation=(), microphone=(self), payment=(), usb=(), interest-cohort=()"
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /manifest.webmanifest
+        name: Content-Type
+        value: application/manifest+json
+      - path: /sw.js
+        name: Cache-Control
+        value: no-cache
+
+  - type: web
+    runtime: python
+    name: elvora-api-preview
+    repo: https://github.com/Arnold-RG/elvora
+    branch: rebuild/elvora-app
+    plan: free
+    region: frankfurt
+    buildCommand: pip install -r api/requirements.txt
+    startCommand: uvicorn api.main:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips='*' --no-server-header
+    healthCheckPath: /health
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: ALLOWED_ORIGINS
+        value: https://elvora-app-preview.onrender.com,http://localhost:8080,http://127.0.0.1:8080
